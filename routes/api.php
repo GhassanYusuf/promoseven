@@ -193,9 +193,6 @@
             // Image Upload
             Route::post('/upload', [UserController::class, 'dummyUpdate']);
 
-            // Employee Logout
-            Route::post('/logout', [AuthController::class, 'logout']);
-
         });
 
     //-------------------------------------------------------------------------
@@ -265,5 +262,8 @@
 //=========================================================================
 //  End Of Protected Routes
 //=========================================================================
+
+        // Employee Logout
+        Route::post('/logout', [AuthController::class, 'logout']);  
 
     });     // Dont Touch Me

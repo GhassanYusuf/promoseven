@@ -155,10 +155,12 @@ class AuthController extends Controller {
 
     public function logout(Request $request) {
 
+        // $result = DB::delete('delete personal_access_tokens where tokenable_id = ? and token = ?', [$request->id, $request->token]);
         auth()->user()->tokens()->delete();
 
         return [
             'message' => 'Logged Out'
+            // 'message' => $result
         ];
 
     }
