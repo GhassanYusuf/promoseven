@@ -116,12 +116,15 @@ class AuthController extends Controller {
 
                 // Case 1
                 if($email_av == true && $password_av == true) {
+
                     // $message                = new \stdClass();
                     // $message->permission    = "rejected";
                     // $message->body          = "Case 1 : Email Available, Password Available, Please Contact HR Department for Password Reset";
                     // return json_encode($message);
+
                 // Case 2
                 } else if($email_av == true && $password_av == false) {
+
                     // $message                = new \stdClass();
                     // $message->permission    = "accepted";
                     // $message->body          = "Case 2 : Email Available, Password Not Available";
@@ -135,14 +138,18 @@ class AuthController extends Controller {
                     return response($response, 201);
                     // $result                 = DB::update('update users set password = ? where cpr = ?', [$password, $cpr]);
                     // return json_encode($message);
+
                 // Case 3
                 } else if($email_av == false && $password_av == true) {
+
                     $message                = new \stdClass();
                     $message->permission    = "rejected";
                     // $message->body          = "Case 3 : Email Not Available, Password Available";
                     // return json_encode($message);
+
                 // Case 4
                 } else {
+
                     // $message                = new \stdClass();
                     // $message->permission    = "accepted";
                     $result                 = DB::update('update users set email = ?, password = ? where cpr = ?', [$email, $password, $cpr]);
@@ -155,6 +162,7 @@ class AuthController extends Controller {
                     return response($response, 201);
                     // $message->body          = "Case 4 : Email Not Available, Password Not Available, Updated Successfully";
                     // return json_encode($message);
+                    
                 }
 
             } else {
