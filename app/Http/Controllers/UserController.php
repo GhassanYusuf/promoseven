@@ -425,6 +425,44 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function search($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+            WHERE 
+                users.name like concat('%', '" . $info . "', '%')
+                OR
+                users.cpr like concat('%', '" . $info . "', '%')
+                OR
+                users.passport like concat('%', '" . $info . "', '%')
+                OR
+                users.email like concat('%', '" . $info . "', '%')
+            ORDER BY 
+                users.name, 
+                company.name, 
+                country.name ASC
+        ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    /**
+     * Find specified resource from storage.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Http\Response
+     */
+
     public function findByName($name) {
 
         // Laravel Raw MySQL Methode

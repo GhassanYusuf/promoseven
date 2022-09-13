@@ -6,52 +6,64 @@
 
     switch ($type) {
         case "all":
-            $color  = "info";
-            $icon   = "fas fa-users";
+            $color      = "info";
+            $icon       = "fas fa-users";
+            $search_url = URL('/api/employees/search/');
             break;
         case "natives":
-            $color  = "success";
-            $icon   = "far fa-flag";
+            $color      = "success";
+            $icon       = "far fa-flag";
+            $search_url = URL('/api/employees/search/');
             break;
         case "expatriates":
-            $color  = "warning";
-            $icon   = "fas fa-globe";
+            $color      = "warning";
+            $icon       = "fas fa-globe";
+            $search_url = URL('/api/employees/search/');
             break;
         case "expiries":
-            $color  = "danger";
-            $icon   = "far fa-clock";
+            $color      = "danger";
+            $icon       = "far fa-clock";
+            $search_url = URL('/api/employees/search/');
             break;
         case "incomplete":
-            $color  = "info";
-            $icon   = "fas fa-chart-pie";
+            $color      = "info";
+            $icon       = "fas fa-chart-pie";
+            $search_url = URL('/api/employees/search/');
             break;
         case "deposits":
-            $color  = "dark";
-            $icon   = "fas fa-passport";
+            $color      = "dark";
+            $icon       = "fas fa-passport";
+            $search_url = URL('/api/employees/search/');
             break;
         case "males":
-            $color  = "primary";
-            $icon   = "nav-icon fas fa-male";
+            $color      = "primary";
+            $icon       = "nav-icon fas fa-male";
+            $search_url = URL('/api/employees/search/');
             break;
         case "females":
-            $color  = "danger";
-            $icon   = "nav-icon fas fa-female";
+            $color      = "danger";
+            $icon       = "nav-icon fas fa-female";
+            $search_url = URL('/api/employees/search/');
             break;
         case "ex":
-            $color  = "danger";
-            $icon   = "fas fa-users";
+            $color      = "danger";
+            $icon       = "fas fa-users";
+            $search_url = URL('/api/employees/search/');
             break;
         case "deposits":
-            $color  = "dark";
-            $icon   = "fas fa-users";
+            $color      = "dark";
+            $icon       = "fas fa-users";
+            $search_url = URL('/api/employees/search/');
             break;
         case "deposits":
-            $color  = "dark";
-            $icon   = "fas fa-users";
+            $color      = "dark";
+            $icon       = "fas fa-users";
+            $search_url = URL('/api/employees/search/');
             break;
         default:
-            $color  = "info";
-            $icon   = "fas fa-users";
+            $color      = "info";
+            $icon       = "fas fa-users";
+            $search_url = URL('/api/employees/search/');
     }
 
 @endphp
@@ -101,7 +113,7 @@
 
                             <div class="card-tools">
                                 <div class="input-group input-group-sm">
-                                    <input type="text" class="form-control" placeholder="Search Mail">
+                                    <input type="text" class="form-control" placeholder="Search" id="search" name="search">
                                     <div class="input-group-append">
                                         <div class="btn btn-{{ $color }}">
                                             <i class="fas fa-search"></i>
@@ -277,5 +289,28 @@
     </section>
 
 </div>
+
+<script type="text/javascript">
+
+    // Key Press Detection
+    $('#search').on('keyup',function() {
+
+        // The Key Press Value
+        $value = $(this).val();
+
+        alert($value);
+
+        // $.ajax({
+        //     type: 'get',
+        //     url: '{{ $search_url }}',
+        //     data: {'search': $value},
+        //     success: function(data) {
+        //         $('tbody').html(data);
+        //     }
+        // };
+
+    });
+
+</script>
 
 @endsection

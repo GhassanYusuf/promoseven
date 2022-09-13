@@ -33,13 +33,15 @@
 
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    // Get An Announcements By ID
+    // Route::get('/valid', [AnnouncementsController::class, 'valid']);
 
 //=========================================================================
 //  Protected Routes
 //=========================================================================
 
     // Protected Routes
-    Route::group(['middleware'=> ['auth:sanctum']], function () {
+    // Route::group(['middleware'=> ['auth:sanctum']], function () {
 
         Route::prefix('leaves')->group(function() {
 
@@ -112,6 +114,9 @@
 
             // Fixed Function : All Employees
             Route::get('/', [UserController::class, 'index']);
+
+            // Fixed Function : Search
+            Route::get('/search/{info}', [UserController::class, 'search']);
 
             // Fixed Function : Get All Male Employees
             Route::get('/ex', [UserController::class, 'ex']);
@@ -265,4 +270,4 @@
         // Employee Logout
         Route::post('/logout', [AuthController::class, 'logout']);  
 
-    }); // Dont Touch Me
+    // }); // Dont Touch Me
