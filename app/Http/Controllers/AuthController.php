@@ -11,87 +11,19 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller {
 
-    public function register2(Request $request) {
-
-        $cpr        = $request->cpr;
-        $email      = $request->email;
-        $password   = bcrypt($request->password);
-      
-        // First Query
-        $result = DB::select('select * from users where cpr = ?', [$cpr]);
-
-        // Person Is Available
-        if(sizeof($result) == 1) {
-
-            $result = $result[0];
-
-            $email_av       = false;
-            $password_av    = false;
-
-            if(!is_null($result->email) || !empty($result->email)) {
-                $email_av = true;
-            }
-
-            if(!is_null($result->password) || $result->password == " ") {
-                $password_av = true;
-            }
-
-            // Case 1
-            if($email_av == true && $password_av == true) {
-
-                $message                = new \stdClass();
-                $message->permission    = "rejected";
-                $message->body          = "Case 1 : Email Available, Password Available, Please Contact HR Department for Password Reset";
-                return json_encode($message);
-
-            // Case 2
-            } else if($email_av == true && $password_av == false) {
-                
-                $message                = new \stdClass();
-                $message->permission    = "accepted";
-                $message->body          = "Case 2 : Email Available, Password Not Available";
-                $result                 = DB::update('update employees set password = ? where cpr_number = ?', [$password, $cpr]);
-                return json_encode($message);
-
-            // Case 3
-            } else if($email_av == false && $password_av == true) {
-
-                $message                = new \stdClass();
-                $message->permission    = "rejected";
-                $message->body          = "Case 3 : Email Not Available, Password Available";
-                return json_encode($message);
-
-            // Case 4
-            } else {
-
-                $message                = new \stdClass();
-                $message->permission    = "accepted";
-                $result                 = DB::update('update employees set email = ?, password = ? where cpr_number = ?', [$email, $password, $cpr]);
-                $message->body          = "Case 4 : Email Not Available, Password Not Available, Updated Successfully";
-                return json_encode($message);
-
-            }
-        } else {
-
-            $message                = new \stdClass();
-            $message->permission    = "rejected";
-            $message->body          = "Sorry Person Doesn't Exist";
-            return json_encode($message);
-        }
-    }
-
     public function register(Request $request) {
 
         $fields = $request->validate([
             'cpr'       => 'required|string',
             'email'     => 'required|string|unique:users,email',
-            'password'  => 'required|string|confirmed'
+            'password'  => 'required|string'
         ]);
 
         //-------------------------------------------------------------
         // Checking The System
         //-------------------------------------------------------------
 
+            // Reading User Input
             $cpr        = $request->cpr;
             $email      = $request->email;
             $password   = bcrypt($request->password);
@@ -102,74 +34,91 @@ class AuthController extends Controller {
             // Person Is Available
             if(sizeof($result) == 1) {
 
-                $result         = $result[0];
+                $result         = json_decode(json_encode($result[0]));
                 $email_av       = false;
                 $password_av    = false;
 
+                // To Make Sure The Email Exist
                 if(!is_null($result->email) || !empty($result->email)) {
                     $email_av = true;
                 }
 
+                // To Make Sure The User Have A Password
                 if(!is_null($result->password) || $result->password == " ") {
                     $password_av = true;
                 }
 
-                // Case 1
+                // Case 1 : Person Email Exist & Password Exist
                 if($email_av == true && $password_av == true) {
-
-                    // $message                = new \stdClass();
-                    // $message->permission    = "rejected";
-                    // $message->body          = "Case 1 : Email Available, Password Available, Please Contact HR Department for Password Reset";
-                    // return json_encode($message);
-
-                // Case 2
-                } else if($email_av == true && $password_av == false) {
-
-                    // $message                = new \stdClass();
-                    // $message->permission    = "accepted";
-                    // $message->body          = "Case 2 : Email Available, Password Not Available";
-                    $result                 = DB::update('update users set email = ?, password = ? where cpr = ?', [$email, $password, $cpr]);
-                    $user                   = User::find($result->id);
-                    $token                  = $user->createToken('flutterAppToken')->plainTextToken;
-                    $response = [
-                        'user'      => $user,
-                        'token'     => $token
-                    ];
-                    return response($response, 201);
-                    // $result                 = DB::update('update users set password = ? where cpr = ?', [$password, $cpr]);
-                    // return json_encode($message);
-
-                // Case 3
-                } else if($email_av == false && $password_av == true) {
 
                     $message                = new \stdClass();
                     $message->permission    = "rejected";
-                    // $message->body          = "Case 3 : Email Not Available, Password Available";
-                    // return json_encode($message);
+                    $message->body          = "Case 1 : Email Available, Password Available, Please Contact HR Department for Password Reset";
 
-                // Case 4
+                    $response = [
+                        'user'              => NULL,
+                        'token'             => NULL,
+                        'message'           => json_encode($message),
+                    ];
+
+                    return response($response, 400);
+
+                // Case 2 : Person Email Exist & Password Not Exist
+                } else if($email_av == true && $password_av == false) {
+
+                    $message                = new \stdClass();
+                    $message->permission    = "accepted";
+                    $message->body          = "Case 2 : Email Available, Password Not Available, Updated Your Password";
+
+                    $res2                   = DB::update('update users set password = ? where cpr = ?', [$password, $cpr]);
+                    $id                     = $result->id;
+                    $user                   = User::find($id);
+                    $token                  = $user->createToken('flutterAppToken')->plainTextToken;
+
+                    $response = [
+                        'user'              => $user,
+                        'token'             => $token,
+                        'message'           => json_encode($message),
+                    ];
+
+                    return response($response, 201);
+
+                // Case 3 : Person Email Not Exist & Password Not Exist
                 } else {
 
-                    // $message                = new \stdClass();
-                    // $message->permission    = "accepted";
-                    $result                 = DB::update('update users set email = ?, password = ? where cpr = ?', [$email, $password, $cpr]);
-                    $user                   = User::find($result[0]->id);
+                    $message                = new \stdClass();
+                    $message->permission    = "accepted";
+                    $message->body          = "Case 3 : Email Not Available, Password Not Available, Updated Your Email & Password";
+
+                    $res2                   = DB::update('update users set email = ?, password = ? where cpr = ?', [$email, $password, $cpr]);
+                    $id                     = $result->id;
+                    $user                   = User::find($id);
                     $token                  = $user->createToken('flutterAppToken')->plainTextToken;
+
                     $response = [
-                        'user'      => $user,
-                        'token'     => $token
+                        'user'              => $user,
+                        'token'             => $token,
+                        'message'           => json_encode($message),
                     ];
+
                     return response($response, 201);
-                    // $message->body          = "Case 4 : Email Not Available, Password Not Available, Updated Successfully";
-                    // return json_encode($message);
                     
                 }
 
             } else {
+
                 $message                = new \stdClass();
                 $message->permission    = "rejected";
-                $message->body          = "Sorry Person Doesn't Exist";
-                return json_encode($message);
+                $message->body          = "Case 4 : There is no user with that CPR";
+
+                $response = [
+                    'user'              => NULL,
+                    'token'             => NULL,
+                    'message'           => $message,
+                ];
+
+                return response($response, 400);
+
             }
 
         //-------------------------------------------------------------
@@ -206,11 +155,13 @@ class AuthController extends Controller {
     }
 
     public function logout(Request $request) {
+
         auth()->user()->tokens()->delete();
 
         return [
             'message' => 'Logged Out'
         ];
+        
     }
 
 }
