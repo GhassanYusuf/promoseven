@@ -31,7 +31,6 @@
 //  Public Routes
 //=========================================================================
 
-
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 
@@ -266,4 +265,4 @@
         // Employee Logout
         Route::post('/logout', [AuthController::class, 'logout']);  
 
-    });     // Dont Touch Me
+    }); // Dont Touch Me
