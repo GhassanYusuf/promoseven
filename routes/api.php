@@ -33,8 +33,9 @@
 
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
+    
     // Get An Announcements By ID
-    // Route::get('/valid', [AnnouncementsController::class, 'valid']);
+    Route::get('/announcements/valid', [AnnouncementsController::class, 'valid']);
 
 //=========================================================================
 //  Protected Routes
@@ -90,7 +91,7 @@
             Route::get('/body/{body}', [AnnouncementsController::class, 'findByBody']);
 
             // Get An Announcements By ID
-            Route::get('/valid', [AnnouncementsController::class, 'valid']);
+            // Route::get('/valid', [AnnouncementsController::class, 'valid']);
 
             // Get All Announcements Between Duration
             Route::get('/duration/{start}/{end}', [AnnouncementsController::class, 'findByDuration']);
