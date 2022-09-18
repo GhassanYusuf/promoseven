@@ -25,7 +25,7 @@
             $icon       = "far fa-clock";
             $search_url = URL('/api/employees/search/');
             break;
-        case "incomplete":
+        case "incompletes":
             $color      = "info";
             $icon       = "fas fa-chart-pie";
             $search_url = URL('/api/employees/search/');
@@ -298,6 +298,7 @@
         // The Key Press Value
         $value = $(this).val();
 
+        // Displays What You Type
         alert($value);
 
         // $.ajax({

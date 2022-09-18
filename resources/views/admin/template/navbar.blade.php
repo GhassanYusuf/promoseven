@@ -47,7 +47,7 @@
 
                     {{-- All Employees --}}
                     <li class="nav-item mt-2">
-                        <a href="{{ URL('/employees/all') }}" class="nav-link">
+                        <a href="{{ route('employees') }}" class="nav-link">
                             <i class="nav-icon fas fa-users"></i>
                             <p class="text">
                                 All
@@ -57,7 +57,7 @@
 
                     {{-- Native Employees --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/natives') }}" class="nav-link">
+                        <a href="{{ route('natives') }}" class="nav-link">
                             <i class="nav-icon far fa-flag"></i>
                             <p class="text">
                                 Natives
@@ -68,7 +68,7 @@
 
                     {{-- All Expatriates --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/expatriates') }}" class="nav-link">
+                        <a href="{{ route('expatriates') }}" class="nav-link">
                             <i class="nav-icon fas fa-globe"></i>
                             <p class="text">
                                 Expatriates
@@ -79,7 +79,7 @@
 
                     {{-- Have Expiries --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/expiries') }}" class="nav-link">
+                        <a href="{{ route('expiries') }}" class="nav-link">
                             <i class="nav-icon far fa-clock"></i>
                             <p class="text">
                                 Have Expiries
@@ -90,7 +90,7 @@
 
                     {{-- Have Incomplete Info --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/incomplete') }}" class="nav-link">
+                        <a href="{{ route('incompletes') }}" class="nav-link">
                             <i class="nav-icon fas fa-chart-pie"></i>
                             <p class="text">
                                 Incomplete
@@ -101,7 +101,7 @@
 
                     {{-- Passport Deposits --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/deposits') }}" class="nav-link">
+                        <a href="{{ route('deposits') }}" class="nav-link">
                             <i class="nav-icon fas fa-passport"></i>
                             <p class="text">
                                 Deposits
@@ -112,7 +112,7 @@
 
                     {{-- All Male Employees --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/males') }}" class="nav-link">
+                        <a href="{{ route('males') }}" class="nav-link">
                             <i class="nav-icon fas fa-male"></i>
                             <p class="text">
                                 Males
@@ -123,7 +123,7 @@
 
                     {{-- All Female Employees --}}
                     <li class="nav-item">
-                        <a href="{{ URL('/employees/females') }}" class="nav-link">
+                        <a href="{{ route('females') }}" class="nav-link">
                             <i class="nav-icon fas fa-female"></i>
                             <p class="text">
                                 Females
@@ -134,7 +134,7 @@
 
                     {{-- All Ex Employees --}}
                     <li class="nav-item mb-2">
-                        <a href="{{ URL('/employees/ex') }}" class="nav-link">
+                        <a href="{{ route('ex') }}" class="nav-link">
                             <i class="nav-icon fas fa-users-slash"></i>
                             <p class="text">
                                 Ex
@@ -150,7 +150,7 @@
 
                     {{-- All Companies --}}
                     <li class="nav-item mt-2">
-                        <a href="{{ route('list.companies') }}" class="nav-link">
+                        <a href="{{ route('companies') }}" class="nav-link">
                             <i class="nav-icon fas fa-building"></i>
                             <p class="text">
                                 Company
@@ -161,7 +161,7 @@
 
                     {{-- Company Departments --}}
                     <li class="nav-item">
-                        <a href="{{ route('list.departments') }}" class="nav-link">
+                        <a href="{{ route('departments') }}" class="nav-link">
                             <i class="nav-icon fas fa-home"></i>
                             <p class="text">
                                 Department
@@ -172,7 +172,7 @@
 
                     {{-- Visa Sources --}}
                     <li class="nav-item mb-10">
-                        <a href="{{ route('list.visas') }}" class="nav-link">
+                        <a href="{{ route('visas') }}" class="nav-link">
                             <i class="nav-icon fas fa-file"></i>
                             <p class="text">
                                 Visa

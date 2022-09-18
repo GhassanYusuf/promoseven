@@ -1,10 +1,10 @@
 @php
 
     // Include Employees Controller
-    //use App\Http\Controllers\ReportsController; 
+    use App\Http\Controllers\ReportsController;
 
     // Get The Boxes Values
-    //$boxes = (new ReportsController)->boxes();
+    $charts = (new ReportsController)->boxes();
 
 @endphp
 
@@ -36,9 +36,14 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer text-center">
-                <a class="text-info" href="{{ URL('/employee/expatriates') }}">View Nationality Report<i class="text-info fas fa-arrow-circle-right ml-2"></i></a>
+                <a class="text-info" href="{{ route('expatriates') }}">View Nationality Report<i class="text-info fas fa-arrow-circle-right ml-2"></i></a>
             </div>
             <!-- /.card-footer -->
+            <script>
+
+                //
+                
+            </script>
         </div>
         <!--/.card -->
 
@@ -67,9 +72,12 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer text-center">
-                <a class="text-success" href="{{ URL('/employee/expatriates') }}">View Company Report<i class="text-success fas fa-arrow-circle-right ml-2"></i></a>
+                <a class="text-success" href="{{ route('expatriates') }}">View Company Report<i class="text-success fas fa-arrow-circle-right ml-2"></i></a>
             </div>
             <!-- /.card-footer -->
+            <script>
+                
+            </script>
         </div>
         <!--/.card -->
 
@@ -92,15 +100,18 @@
                     </button>
                 </div>
             </div>
-            <!-- /.card-header -->
+            <!-- Card Body -->
             <div class="card-body p-0">
                 <div class="text-center mr-5"><canvas class="p-0 m-0" id="visChart" height="100%" width="100%"></canvas></div>
             </div>
-            <!-- /.card-body -->
+            <!-- Card Footer -->
             <div class="card-footer text-center">
-                <a class="text-warning" href="{{ URL('/employee/expatriates') }}">View Visa Report<i class="text-warning fas fa-arrow-circle-right ml-2"></i></a>
+                <a class="text-warning" href="{{ route('expatriates') }}">View Visa Report<i class="text-warning fas fa-arrow-circle-right ml-2"></i></a>
             </div>
-            <!-- /.card-footer -->
+            <!-- Java Script For This Chart -->
+            <script>
+                
+            </script>
         </div>
         <!--/.card -->
 

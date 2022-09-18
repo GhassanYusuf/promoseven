@@ -44,13 +44,13 @@ use App\Http\Controllers\PassportsController;
 
     // Login
     Route::get('/', function() {
-        return view('admin.employee.login');
+        return view('admin.dashboard.employee.login');
     })->name('login');
 
     // Fixed Function : Get Employees Nationality Count & Percentages
     Route::get('/dashboard', function() {
         $boxes = (new ReportsController)->boxes();
-        return view('index', compact('boxes'));
+        return view('admin.dashboard.dashboard', compact('boxes'));
     })->name('dashboard');
 
 //--------------------------------------------------------------------
@@ -63,64 +63,64 @@ use App\Http\Controllers\PassportsController;
         Route::get('/all', function() {
             $type       = "all";
             $employees  = (new UserController)->index();
-            return view('admin.employee.list', compact('type','employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type','employees'));
+        })->name('employees');
 
         // Native Employees
         Route::get('/natives', function() {
             $type       = "natives";
             $employees  = (new UserController)->native();
-            return view('admin.employee.list', compact('type','employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type','employees'));
+        })->name('natives');
 
         // Expatriates Employees
         Route::get('/expatriates', function() {
             $type       = "expatriates";
             $employees  = (new UserController)->expatriate();
-            return view('admin.employee.list', compact('type','employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type','employees'));
+        })->name('expatriates');
 
         // Employees Expiries
         Route::get('/expiries', function() {
             $type       = "expiries";
             $employees  = (new UserController)->expiries();
-            return view('admin.employee.list', compact('type','employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type','employees'));
+        })->name('expiries');
 
         // Employees With Incomplete Profiles
         Route::get('/males', function() {
             $type       = "males";
             $employees  = (new UserController)->males();
-            return view('admin.employee.list', compact('type','employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type','employees'));
+        })->name('males');
 
         // Employees With Incomplete Profiles
         Route::get('/females', function() {
             $type       = "females";
             $employees  = (new UserController)->females();
-            return view('admin.employee.list', compact('type','employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type','employees'));
+        })->name('females');
 
         // Employees With Incomplete Profiles
-        Route::get('/incomplete', function() {
-            $type       = "incomplete";
+        Route::get('/incompletes', function() {
+            $type       = "incompletes";
             $employees  = (new UserController)->incomplete();
-            return view('admin.employee.list', compact('type', 'employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type', 'employees'));
+        })->name('incompletes');
 
         // Employees Passports In Deposits
         Route::get('/deposits', function() {
             $type       = "deposits";
             $employees  = (new UserController)->deposits();
-            return view('admin.employee.list', compact('type', 'employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type', 'employees'));
+        })->name('deposits');
 
         // Employees Passports In Deposits
         Route::get('/ex', function() {
             $type       = "ex";
             $employees  = (new UserController)->ex();
-            return view('admin.employee.list', compact('type', 'employees'));
-        });
+            return view('admin.dashboard.employee.list', compact('type', 'employees'));
+        })->name('ex');
 
         // Fixed Function : Get Employees Nationality Count & Percentages
         Route::get('/{id}', function($id) {
@@ -129,7 +129,7 @@ use App\Http\Controllers\PassportsController;
             $notes      = (new NotesController)->show($id);
             $passports  = (new PassportsController)->show($id);
             $files      = (new AttachmentsController)->show($id);
-            return view('admin.employee.profile', compact('profile', 'leaves', 'notes', 'passports', 'files'));
+            return view('admin.dashboard.employee.profile', compact('profile', 'leaves', 'notes', 'passports', 'files'));
         })->name('profile');
 
         // Returns All Employees By Name Referance
@@ -190,20 +190,20 @@ use App\Http\Controllers\PassportsController;
         // All Employees
         Route::get('/companies', function() {
             $companies  = (new CompaniesController)->index();
-            return view('admin.enterprice.company.list', compact('companies'));
-        })->name('list.companies');
+            return view('admin.dashboard.enterprice.company.list', compact('companies'));
+        })->name('companies');
 
         // Native Employees
         Route::get('/departments', function() {
             $departments  = (new UserController)->native();
-            return view('admin.enterprice.department.list', compact('departments'));
-        })->name('list.departments');
+            return view('admin.dashboard.enterprice.department.list', compact('departments'));
+        })->name('departments');
 
         // Expatriates Employees
         Route::get('/visas', function() {
             $visas  = (new UserController)->expatriate();
-            return view('admin.enterprice.visa.list', compact('visas'));
-        })->name('list.visas');
+            return view('admin.dashboard.enterprice.visa.list', compact('visas'));
+        })->name('visas');
 
     });
 

@@ -22,7 +22,7 @@
             <div class="icon">
             <i class="fas fa-users"></i>
             </div>
-            <a href="{{ URL('/employees/all') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('employees') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     
@@ -37,7 +37,7 @@
             <div class="icon">
             <i class="far fa-flag"></i>
             </div>
-            <a href="{{ URL('/employees/natives') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('natives') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     
@@ -52,7 +52,7 @@
             <div class="icon">
             <i class="fas fa-globe"></i>
             </div>
-            <a href="{{ URL('/employees/expatriates') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('expatriates') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     
@@ -67,7 +67,7 @@
             <div class="icon">
             <i class="far fa-clock"></i>
             </div>
-            <a href="{{ URL('/employees/expiries') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('expiries') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     
@@ -82,7 +82,7 @@
             <div class="icon">
             <i class="fas fa-chart-pie"></i>
             </div>
-            <a href="{{ URL('/employees/incomplete') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('incompletes') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
     
@@ -97,7 +97,7 @@
             <div class="icon">
             <i class="fas fa-passport"></i>
             </div>
-            <a href="{{ URL('/employees/deposits') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            <a href="{{ route('deposits') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 

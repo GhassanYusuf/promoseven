@@ -150,7 +150,7 @@
         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <!-- User image -->
             <li class="user-header bg-dark">
-            <img src="{{ asset('dist/img/avatar/male.png') }}" class="img-circle elevation-2" alt="User Image">
+            <img src="{{ asset('dist/img/avatar/male.png') }}" class="img-circle elevation-0" size= alt="User Image">
             <p>
                 Alexander Pierce - Web Developer
                 <small>Member since Nov. 2012</small>
