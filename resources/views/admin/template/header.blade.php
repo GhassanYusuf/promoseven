@@ -49,11 +49,11 @@
     </li>
 
     <!-- Batch Add New Employee Button -->
-    {{-- <li class="nav-item">
-        <a class="nav-link" href="#" role="button">
+    <li class="nav-item">
+        <a class="add_employee nav-link" href="#" role="button">
             <i class="fas fa-users mr-2"></i><b>BATCH</b>
         </a>
-    </li> --}}
+    </li>
 
     <!-- Messages Dropdown Menu -->
     <li class="nav-item dropdown">
