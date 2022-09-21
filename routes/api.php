@@ -1,5 +1,9 @@
 <?php
 
+//=========================================================================
+//  Includes Of The Controllers For The Routes
+//=========================================================================
+
     // Include Request Library
     use Illuminate\Http\Request;
 
@@ -27,20 +31,21 @@
     // Sanctum Authentication Controller
     use App\Http\Controllers\AuthController;
 
+    // Sanctum Visas Controller
     use App\Http\Controllers\VisasController;
 
+    // Sanctum Companies Controller
     use App\Http\Controllers\CompaniesController;
-
 
 //=========================================================================
 //  Public Routes
 //=========================================================================
 
+    // Sanctum Login
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Sanctum Register
     Route::post('/register', [AuthController::class, 'register']);
-    
-    // Get An Announcements By ID
-    Route::get('/announcements/valid', [AnnouncementsController::class, 'valid']);
 
 //=========================================================================
 //  Protected Routes
@@ -49,161 +54,151 @@
     // Protected Routes
     // Route::group(['middleware'=> ['auth:sanctum']], function () {
 
-        Route::prefix('leaves')->group(function() {
+        // Show all Leaves Regardsless Of Status
+        Route::get('leaves/', [LeavesController::class, 'index']);        // Not Working
 
-            // Show all Leaves Regardsless Of Status
-            Route::get('/', [LeavesController::class, 'index']);        // Not Working
+        // Create A New Leave Request
+        Route::post('leaves/', [LeavesController::class, 'store']);       // Not Working
 
-            // Create A New Leave Request
-            Route::post('/', [LeavesController::class, 'store']);       // Not Working
+        // Get Leaves Of an Employee By ID
+        Route::get('leaves/{id}', [LeavesController::class, 'show']);     // Select By Employee ID
 
-            // Get Leaves Of an Employee By ID
-            Route::get('/{id}', [LeavesController::class, 'show']);     // Select By Employee ID
+        // Update Leaves Of an Employee By ID
+        Route::put('leaves/{id}', [LeavesController::class, 'update']);   // Not Working
 
-            // Update Leaves Of an Employee By ID
-            Route::put('/{id}', [LeavesController::class, 'update']);   // Not Working
+        // Get All Pending Leaves
+        Route::get('leaves/pending', [LeavesController::class, 'pendingReq']);
 
-            // Get All Pending Leaves
-            Route::get('/pending', [LeavesController::class, 'pendingReq']);
+        // Delete A Leave Request By ID
+        Route::delete('leaves/{id}', [LeavesController::class, 'destroy']);
 
-            // Delete A Leave Request By ID
-            Route::delete('/{id}', [LeavesController::class, 'destroy']);
+        // Get All Valid Leaves Request By Employee ID
+        Route::get('leaves/valid/{id}', [LeavesController::class, 'valid']);
 
-            // Get All Valid Leaves Request By Employee ID
-            Route::get('/valid/{id}', [LeavesController::class, 'valid']);
-
-            // Get All Leaves Request Between Duration Of A Specific Employee
-            Route::get('/duration/{id}/{start}/{end}', [LeavesController::class, 'findByDuration']);
-
-        });
+        // Get All Leaves Request Between Duration Of A Specific Employee
+        Route::get('leaves/duration/{id}/{start}/{end}', [LeavesController::class, 'findByDuration']);
 
     //-------------------------------------------------------------------------
     //  Announcements Routes
     //-------------------------------------------------------------------------
 
-        Route::prefix('announcements')->group(function() {
+        // Get All Announcements
+        Route::get('announcements/', [AnnouncementsController::class, 'index']);
 
-            // Get All Announcements
-            Route::get('/', [AnnouncementsController::class, 'index']);
+        // Get An Announcements By ID
+        Route::get('announcements/{id}', [AnnouncementsController::class, 'show']);
 
-            // Get An Announcements By ID
-            Route::get('/{id}', [AnnouncementsController::class, 'show']);
+        // Get All Announcements By Title Content
+        Route::get('announcements/title/{title}', [AnnouncementsController::class, 'findByTitle']);
 
-            // Get All Announcements By Title Content
-            Route::get('/title/{title}', [AnnouncementsController::class, 'findByTitle']);
+        // Get All Announcements By Body Content
+        Route::get('announcements/body/{body}', [AnnouncementsController::class, 'findByBody']);
 
-            // Get All Announcements By Body Content
-            Route::get('/body/{body}', [AnnouncementsController::class, 'findByBody']);
+        // Get An Announcements By ID
+        Route::get('/announcements/valid', [AnnouncementsController::class, 'valid']);
 
-            // Get An Announcements By ID
-            // Route::get('/valid', [AnnouncementsController::class, 'valid']);
+        // Get All Announcements Between Duration
+        Route::get('announcements/duration/{start}/{end}', [AnnouncementsController::class, 'findByDuration']);
 
-            // Get All Announcements Between Duration
-            Route::get('/duration/{start}/{end}', [AnnouncementsController::class, 'findByDuration']);
+        // Create A New Announcement
+        Route::post('announcements/', [AnnouncementsController::class, 'store']);
 
-            // Create A New Announcement
-            Route::post('/', [AnnouncementsController::class, 'store']);
+        // Update An Announcement By ID
+        Route::put('announcements/{id}', [AnnouncementsController::class, 'update']);
 
-            // Update An Announcement By ID
-            Route::put('/{id}', [AnnouncementsController::class, 'update']);
-
-            // Delete An Announcement By ID
-            Route::delete('/{id}', [AnnouncementsController::class, 'destroy']);
-
-        });
+        // Delete An Announcement By ID
+        Route::delete('announcements/{id}', [AnnouncementsController::class, 'destroy']);
 
     //-------------------------------------------------------------------------
     //  Employees Routes
     //-------------------------------------------------------------------------
 
-        Route::prefix('employees')->group(function() {
+        // Fixed Function : All Employees
+        Route::get('employees/', [UserController::class, 'index']);
 
-            // Fixed Function : All Employees
-            Route::get('/', [UserController::class, 'index']);
+        // Fixed Function : Search
+        Route::get('employees/search/{info}', [UserController::class, 'search']);
 
-            // Fixed Function : Search
-            Route::get('/search/{info}', [UserController::class, 'search']);
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/ex', [UserController::class, 'ex']);
 
-            // Fixed Function : Get All Male Employees
-            Route::get('/ex', [UserController::class, 'ex']);
+        // Fixed Function : Insert Passport Transaction
+        Route::post('employees/passport', [PassportsController::class, 'store']);
 
-            Route::post('/passport', [PassportsController::class, 'store']);
+        // Fixed Function : Get All Passport Transactions
+        Route::get('employees/passport', [PassportsController::class, 'index']);
 
-            Route::get('/passport', [PassportsController::class, 'index']);
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/ex/{input}', [UserController::class, 'exemp']);
 
-            // Fixed Function : Get All Male Employees
-            Route::get('/ex/{input}', [UserController::class, 'exemp']);
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/male', [UserController::class, 'males']);
 
-            // Fixed Function : Get All Male Employees
-            Route::get('/male', [UserController::class, 'males']);
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/male/{input}', [UserController::class, 'males']);
 
-            // Fixed Function : Get All Male Employees
-            Route::get('/male/{input}', [UserController::class, 'males']);
+        // Fixed Function : Get All Female Employees
+        Route::get('employees/female', [UserController::class, 'females']);
 
-            // Fixed Function : Get All Female Employees
-            Route::get('/female', [UserController::class, 'females']);
+        // Fixed Function : Get All Female Employees
+        Route::get('employees/female/{input}', [UserController::class, 'females']);
 
-            // Fixed Function : Get All Female Employees
-            Route::get('/female/{input}', [UserController::class, 'females']);
+        // Fixed Function : Get All Native Employees
+        Route::get('employees/native', [UserController::class, 'native']);
 
-            // Fixed Function : Get All Native Employees
-            Route::get('/native', [UserController::class, 'native']);
+        // Fixed Function : Get All Native Employees
+        Route::get('employees/native/{input}', [UserController::class, 'native']);
 
-            // Fixed Function : Get All Native Employees
-            Route::get('/native/{input}', [UserController::class, 'native']);
+        // Fixed Function : Get All Expatriates Employees
+        Route::get('employees/expatriate', [UserController::class, 'expatriate']);
 
-            // Fixed Function : Get All Expatriates Employees
-            Route::get('/expatriate', [UserController::class, 'expatriate']);
+        // Fixed Function : Get All Expatriates Employees
+        Route::get('employees/expatriate/{input}', [UserController::class, 'expatriate']);
 
-            // Fixed Function : Get All Expatriates Employees
-            Route::get('/expatriate/{input}', [UserController::class, 'expatriate']);
+        // Fixed Function : Employees Expiries
+        Route::get('employees/expire', [UserController::class, 'expiries']);
 
-            // Fixed Function : Employees Expiries
-            Route::get('/expire', [UserController::class, 'expiries']);
+        // Fixed Function : Employees Expiries
+        Route::get('employees/expire/{input}', [UserController::class, 'expiries']);
 
-            // Fixed Function : Employees Expiries
-            Route::get('/expire/{input}', [UserController::class, 'expiries']);
+        // Fixed Function : Employees With Incomplete Profiles
+        Route::get('employees/incomplete', [UserController::class, 'incomplete']);
 
-            // Fixed Function : Employees With Incomplete Profiles
-            Route::get('/incomplete', [UserController::class, 'incomplete']);
+        // Fixed Function : Employees With Incomplete Profiles
+        Route::get('employees/incomplete/{input}', [UserController::class, 'incomplete']);
 
-            // Fixed Function : Employees With Incomplete Profiles
-            Route::get('/incomplete/{input}', [UserController::class, 'incomplete']);
+        // Fixed Function : Employees Passports In Deposits
+        Route::get('employees/deposit', [UserController::class, 'deposits']);
 
-            // Fixed Function : Employees Passports In Deposits
-            Route::get('/deposit', [UserController::class, 'deposits']);
+        // Fixed Function : Employees Passports In Deposits
+        Route::get('employees/deposit/{id}', [UserController::class, 'deposits']);
 
-            // Fixed Function : Employees Passports In Deposits
-            Route::get('/deposit/{id}', [UserController::class, 'deposits']);
+        // Create A New Employee
+        Route::post('employees/', [UserController::class, 'store']);
 
-            // Create A New Employee
-            Route::post('/', [UserController::class, 'store']);
+        // Update An Employee By ID
+        Route::put('employees/{id}', [UserController::class, 'update']);
 
-            // Update An Employee By ID
-            Route::put('/{id}', [UserController::class, 'update']);
+        // Delete An Employee By ID
+        Route::delete('employees/{id}', [UserController::class, 'destroy']);
 
-            // Delete An Employee By ID
-            Route::delete('/{id}', [UserController::class, 'destroy']);
+        // Returns Employee By ID
+        Route::get('employees/{id}', [UserController::class, 'show']);
 
-            // Returns Employee By ID
-            Route::get('/{id}', [UserController::class, 'show']);
+        // Returns All Employees By Name Referance
+        Route::get('employees/name/{name}', [UserController::class, 'findByName']);
 
-            // Returns All Employees By Name Referance
-            Route::get('/name/{name}', [UserController::class, 'findByName']);
+        // Returns All Employees By Name Referance
+        Route::get('employees/cpr/{cpr}', [UserController::class, 'findByCPR']);
 
-            // Returns All Employees By Name Referance
-            Route::get('/cpr/{cpr}', [UserController::class, 'findByCPR']);
+        // Returns All Employees By Company Referance
+        Route::get('employees/company/{company}', [UserController::class, 'findByCompany']);
 
-            // Returns All Employees By Company Referance
-            Route::get('/company/{company}', [UserController::class, 'findByCompany']);
+        // Returns All Employees By Visa Referance
+        Route::get('employees/visa/{visa}', [UserController::class, 'findByVisa']);
 
-            // Returns All Employees By Visa Referance
-            Route::get('/visa/{visa}', [UserController::class, 'findByVisa']);
-
-            // Image Upload
-            Route::post('/upload', [UserController::class, 'dummyUpdate']);
-
-        });
+        // Image Upload
+        Route::post('employees/upload', [UserController::class, 'dummyUpdate']);
 
     //-------------------------------------------------------------------------
     //  Statistics Routes
