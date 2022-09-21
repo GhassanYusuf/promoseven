@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\DB;
 
 class NotesController extends Controller
 {
+
+    public function index() {
+        $result = DB::select("SELECT * FROM employees_notes ORDER BY created_at DESC");
+        return $result;
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -28,6 +34,19 @@ class NotesController extends Controller
      */
 
     public function show($id) {
+
+        // Laravel Raw MySQL Methode
+        $query = ("SELECT * FROM employees_notes WHERE id = ?");
+
+        // Executing The Query
+        $results = DB::select($query, [$id]);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    public function findByEmployee($id) {
 
         // Laravel Raw MySQL Methode
         $query = (" 

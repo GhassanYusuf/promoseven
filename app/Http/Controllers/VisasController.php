@@ -68,7 +68,16 @@ class VisasController extends Controller
      */
 
     public function update(Request $request, $id) {
-        //
+
+        // Find The Note By Its ID
+        $results = employees_visas::find($id);
+        
+        // Update The Note With Request Data
+        $results->update($request->all());
+
+        // Return The Values For Display
+        return $results;
+
     }
 
     /**
@@ -79,6 +88,7 @@ class VisasController extends Controller
      */
 
     public function destroy($id) {
-        //
+        // Deleteing The Note By Its ID
+        return employees_visas::destroy($id);
     }
 }

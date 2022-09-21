@@ -27,6 +27,11 @@
     // Sanctum Authentication Controller
     use App\Http\Controllers\AuthController;
 
+    use App\Http\Controllers\VisasController;
+
+    use App\Http\Controllers\CompaniesController;
+
+
 //=========================================================================
 //  Public Routes
 //=========================================================================
@@ -204,65 +209,96 @@
     //  Statistics Routes
     //-------------------------------------------------------------------------
 
-        Route::prefix('statistics')->group(function() {
+        // Fixed Function : Get Employees Nationality Count & Percentages
+        Route::get('statistics/boxes', [ReportsController::class, 'boxes']);
 
-            // Fixed Function : Get Employees Nationality Count & Percentages
-            Route::get('/boxes', [ReportsController::class, 'boxes']);
+        // Fixed Function : Get Onleave People Lite Information
+        Route::get('statistics/onleave', [ReportsController::class, 'OnLeaveLite']);
 
-            // Fixed Function : Get Onleave People Lite Information
-            Route::get('/onleave', [ReportsController::class, 'OnLeaveLite']);
+        // Fixed Function : Get Anniversary People Lite Information
+        Route::get('statistics/anniversary', [ReportsController::class, 'AnniversaryLite']);    // Need to Fixed - Should Be Only People Above One Year
 
-            // Fixed Function : Get Anniversary People Lite Information
-            Route::get('/anniversary', [ReportsController::class, 'AnniversaryLite']);    // Need to Fixed - Should Be Only People Above One Year
+        // Fixed Function : Get Probation People Lite Information
+        Route::get('statistics/probation', [ReportsController::class, 'ProbationLite']);
 
-            // Fixed Function : Get Probation People Lite Information
-            Route::get('/probation', [ReportsController::class, 'ProbationLite']);
+        // Fixed Function : Get Probation People Lite Information
+        Route::get('statistics/birthday', [ReportsController::class, 'BirthdayLite']);
 
-            // Fixed Function : Get Probation People Lite Information
-            Route::get('/birthday', [ReportsController::class, 'BirthdayLite']);
+        // Fixed Function : Get Employees Nationality Count & Percentages
+        Route::get('statistics/nationality', [ReportsController::class, 'country']);
 
-            // Fixed Function : Get Employees Nationality Count & Percentages
-            Route::get('/nationality', [ReportsController::class, 'country']);
+        // Fixed Function : Get Male/Female Percentage
+        Route::get('statistics/gender', [ReportsController::class, 'gender']);
 
-            // Fixed Function : Get Male/Female Percentage
-            Route::get('/gender', [ReportsController::class, 'gender']);
+        // Fixed Function : Get Company Employees Percentage
+        Route::get('statistics/company', [ReportsController::class, 'company']);
 
-            // Fixed Function : Get Company Employees Percentage
-            Route::get('/company', [ReportsController::class, 'company']);
+        // Fixed Function : Get Company Employees Percentage
+        Route::get('statistics/visa', [ReportsController::class, 'visa']);
 
-            // Fixed Function : Get Company Employees Percentage
-            Route::get('/visa', [ReportsController::class, 'visa']);
-
-            // Fixed Function : Deposit Count
-            Route::get('/passport', [ReportsController::class, 'passport']);
-        
-        });
+        // Fixed Function : Deposit Count
+        Route::get('statistics/passport', [ReportsController::class, 'passport']);
 
     //-------------------------------------------------------------------------
     //  Notes Routes
     //-------------------------------------------------------------------------
 
-        Route::prefix('notes')->group(function() {
+        // Fixed Function : Get A Specific Employee Notes
+        Route::get('notes/all', [NotesController::class, 'index']);  // NO FUNCTION IN CONTROLLER
 
-            // Fixed Function : Get A Note By Its ID
-            Route::get('/{id}', [NotesController::class, 'show']);
+        // Fixed Function : Get A Note By Its ID
+        Route::get('notes/{id}', [NotesController::class, 'show']);  // NOT WORKING
 
-            // Fixed Function : Get A Specific Employee Notes
-            Route::get('/all', [NotesController::class, 'index']);
+        // Fixed Function : Add Notes To Employees
+        Route::post('notes/add', [NotesController::class, 'store']);
 
-            // Fixed Function : Add Notes To Employees
-            Route::post('/add', [NotesController::class, 'store']);
+        // Fixed Function : Get A Specific Employee Notes
+        Route::get('notes/employee/{id}', [NotesController::class, 'findByEmployee']);  // NOT WORKING
 
-            // Fixed Function : Get A Specific Employee Notes
-            Route::get('/employee/{id}', [NotesController::class, 'show']);
+        // Fixed Function : Delete A Note By Its ID
+        Route::delete('notes/delete/{id}', [NotesController::class, 'destroy'])->name('delete.note');
 
-            // Fixed Function : Delete A Note By Its ID
-            Route::delete('/delete/{id}', [NotesController::class, 'destroy'])->name('delete.note');
+        // Fixed Function : Get Employees Nationality Count & Percentages
+        Route::put('notes/update/{id}', [NotesController::class, 'update']);
 
-            // Fixed Function : Get Employees Nationality Count & Percentages
-            Route::put('/update/{id}', [NotesController::class, 'update']);
+    //-------------------------------------------------------------------------
+    //  Visas Routes
+    //-------------------------------------------------------------------------
+
+        // Fixed Function : Get A Specific Employee Notes
+        Route::get('visas/all', [VisasController::class, 'index']);    
+    
+        // Fixed Function : Get A Note By Its ID
+        Route::get('visas/{id}', [VisasController::class, 'show']);
+
+        // Fixed Function : Add Notes To Employees
+        Route::post('visas/add', [VisasController::class, 'store']);
+
+        // Fixed Function : Delete A Note By Its ID
+        Route::delete('visas/delete/{id}', [VisasController::class, 'destroy'])->name('delete.note');
+
+        // Fixed Function : Get Employees Nationality Count & Percentages
+        Route::put('visas/update/{id}', [VisasController::class, 'update']);
+
+    //-------------------------------------------------------------------------
+    //  Companies Routes
+    //-------------------------------------------------------------------------
+
+        // Fixed Function : Get A Note By Its ID
+        Route::get('companies/all', [CompaniesController::class, 'index']);
+
+        // Fixed Function : Get A Note By Its ID
+        Route::get('companies/{id}', [CompaniesController::class, 'show']);
+
+        // Fixed Function : Add Notes To Employees
+        Route::post('companies/add', [CompaniesController::class, 'store']);
+
+        // Fixed Function : Delete A Note By Its ID
+        Route::delete('companies/delete/{id}', [CompaniesController::class, 'destroy'])->name('delete.note');
+
+        // Fixed Function : Get Employees Nationality Count & Percentages
+        Route::put('companies/update/{id}', [CompaniesController::class, 'update']);
         
-        });
 
 //=========================================================================
 //  End Of Protected Routes
