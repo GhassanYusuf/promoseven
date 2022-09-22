@@ -55,16 +55,16 @@
 //=========================================================================
 
     // Protected Routes
-    Route::group(['middleware'=> ['auth:sanctum']], function () {
+    // Route::group(['middleware'=> ['auth:sanctum']], function () {
 
         // Show all Leaves Regardsless Of Status
         Route::get('leaves/all', [LeavesController::class, 'index']);               // Not Working
 
         // Get All Pending Leaves
-        Route::get('leaves/pending', [LeavesController::class, 'pendingReq']);
+        Route::get('leaves/pending/all', [LeavesController::class, 'pendingReq']);
 
         // Get Leaves Of an Employee By ID
-        Route::get('leaves/{id}', [LeavesController::class, 'show']);               // Select By Employee ID
+        Route::get('leaves/id/{id}', [LeavesController::class, 'show']);               // Select By Employee ID
 
         // Get All Valid Leaves Request By Employee ID
         Route::get('leaves/valid/{id}', [LeavesController::class, 'valid']);
@@ -73,13 +73,13 @@
         Route::get('leaves/duration/{id}/{start}/{end}', [LeavesController::class, 'findByDuration']);
 
         // Create A New Leave Request
-        Route::post('leaves/new', [LeavesController::class, 'store']);              // Not Working
+        Route::post('leaves/add', [LeavesController::class, 'store']);              // Not Working
 
         // Update Leaves Of an Employee By ID
         Route::put('leaves/update/{id}', [LeavesController::class, 'update']);      // Not Working
 
         // Delete A Leave Request By ID
-        Route::delete('leaves/{id}', [LeavesController::class, 'destroy']);
+        Route::delete('leaves/delete/{id}', [LeavesController::class, 'destroy']);
 
         
 
@@ -88,13 +88,13 @@
     //-------------------------------------------------------------------------
 
         // Get All Announcements
-        Route::get('announcements/', [AnnouncementsController::class, 'index']);
+        Route::get('announcements/all', [AnnouncementsController::class, 'index']);
 
         // Get An Announcements By ID
-        Route::get('/announcements/valid', [AnnouncementsController::class, 'valid']);
+        Route::get('/announcements/valid/all', [AnnouncementsController::class, 'valid']);
 
         // Get An Announcements By ID
-        Route::get('announcements/{id}', [AnnouncementsController::class, 'show']);
+        Route::get('announcements/id/{id}', [AnnouncementsController::class, 'show']);
 
         // Get All Announcements By Title Content
         Route::get('announcements/title/{title}', [AnnouncementsController::class, 'findByTitle']);
@@ -106,89 +106,86 @@
         Route::get('announcements/duration/{start}/{end}', [AnnouncementsController::class, 'findByDuration']);
 
         // Create A New Announcement
-        Route::post('announcements/', [AnnouncementsController::class, 'store']);
+        Route::post('announcements/add', [AnnouncementsController::class, 'store']);
 
         // Update An Announcement By ID
-        Route::put('announcements/{id}', [AnnouncementsController::class, 'update']);
+        Route::put('announcements/update/{id}', [AnnouncementsController::class, 'update']);
 
         // Delete An Announcement By ID
-        Route::delete('announcements/{id}', [AnnouncementsController::class, 'destroy']);
+        Route::delete('announcements/delete/{id}', [AnnouncementsController::class, 'destroy']);
 
     //-------------------------------------------------------------------------
     //  Employees Routes
     //-------------------------------------------------------------------------
 
         // Fixed Function : All Employees
-        Route::get('employees/', [UserController::class, 'index']);
+        Route::get('employees/all', [UserController::class, 'index']);
 
         // Fixed Function : Search
         Route::get('employees/search/{info}', [UserController::class, 'search']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/ex', [UserController::class, 'ex']);
+        Route::get('employees/ex/all', [UserController::class, 'ex']);
 
-        // Fixed Function : Insert Passport Transaction
-        Route::post('employees/passport', [PassportsController::class, 'store']);
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/ex/search/{input}', [UserController::class, 'exemp']);
 
         // Fixed Function : Get All Passport Transactions
-        Route::get('employees/passport', [PassportsController::class, 'index']);
+        Route::get('employees/passport/all', [PassportsController::class, 'index']);
 
-        // Fixed Function : Get All Male Employees
-        Route::get('employees/ex/{input}', [UserController::class, 'exemp']);
-
-        // Fixed Function : Get All Male Employees
-        Route::get('employees/male', [UserController::class, 'males']);
-
-        // Fixed Function : Get All Male Employees
-        Route::get('employees/male/{input}', [UserController::class, 'males']);
-
-        // Fixed Function : Get All Female Employees
-        Route::get('employees/female', [UserController::class, 'females']);
-
-        // Fixed Function : Get All Female Employees
-        Route::get('employees/female/{input}', [UserController::class, 'females']);
-
-        // Fixed Function : Get All Native Employees
-        Route::get('employees/native', [UserController::class, 'native']);
-
-        // Fixed Function : Get All Native Employees
-        Route::get('employees/native/{input}', [UserController::class, 'native']);
-
-        // Fixed Function : Get All Expatriates Employees
-        Route::get('employees/expatriate', [UserController::class, 'expatriate']);
-
-        // Fixed Function : Get All Expatriates Employees
-        Route::get('employees/expatriate/{input}', [UserController::class, 'expatriate']);
-
-        // Fixed Function : Employees Expiries
-        Route::get('employees/expire', [UserController::class, 'expiries']);
-
-        // Fixed Function : Employees Expiries
-        Route::get('employees/expire/{input}', [UserController::class, 'expiries']);
-
-        // Fixed Function : Employees With Incomplete Profiles
-        Route::get('employees/incomplete', [UserController::class, 'incomplete']);
-
-        // Fixed Function : Employees With Incomplete Profiles
-        Route::get('employees/incomplete/{input}', [UserController::class, 'incomplete']);
+        // Fixed Function : Insert Passport Transaction
+        Route::post('employees/passport/add', [PassportsController::class, 'store']);
 
         // Fixed Function : Employees Passports In Deposits
-        Route::get('employees/deposit', [UserController::class, 'deposits']);
+        Route::get('employees/passport/deposit/all', [UserController::class, 'deposits']);
 
-        // Fixed Function : Employees Passports In Deposits
-        Route::get('employees/deposit/{id}', [UserController::class, 'deposits']);
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/male/all', [UserController::class, 'males']);
+
+        // Fixed Function : Get All Male Employees
+        Route::get('employees/male/search/{input}', [UserController::class, 'males']);
+
+        // Fixed Function : Get All Female Employees
+        Route::get('employees/female/all', [UserController::class, 'females']);
+
+        // Fixed Function : Get All Female Employees
+        Route::get('employees/female/search/{input}', [UserController::class, 'females']);
+
+        // Fixed Function : Get All Native Employees
+        Route::get('employees/native/all', [UserController::class, 'native']);
+
+        // Fixed Function : Get All Native Employees
+        Route::get('employees/native/search/{input}', [UserController::class, 'native']);
+
+        // Fixed Function : Get All Expatriates Employees
+        Route::get('employees/expatriate/all', [UserController::class, 'expatriate']);
+
+        // Fixed Function : Get All Expatriates Employees
+        Route::get('employees/expatriate/search/{input}', [UserController::class, 'expatriate']);
+
+        // Fixed Function : Employees Expiries
+        Route::get('employees/expire/all', [UserController::class, 'expiries']);
+
+        // Fixed Function : Employees Expiries
+        Route::get('employees/expire/search/{input}', [UserController::class, 'expiries']);
+
+        // Fixed Function : Employees With Incomplete Profiles
+        Route::get('employees/incomplete/all', [UserController::class, 'incomplete']);
+
+        // Fixed Function : Employees With Incomplete Profiles
+        Route::get('employees/incomplete/search/{input}', [UserController::class, 'incomplete']);
 
         // Create A New Employee
-        Route::post('employees/', [UserController::class, 'store']);
+        Route::post('employees/add', [UserController::class, 'store']);
 
         // Update An Employee By ID
-        Route::put('employees/{id}', [UserController::class, 'update']);
+        Route::put('employees/update/{id}', [UserController::class, 'update']);
 
         // Delete An Employee By ID
-        Route::delete('employees/{id}', [UserController::class, 'destroy']);
+        Route::delete('employees/delete/{id}', [UserController::class, 'destroy']);
 
         // Returns Employee By ID
-        Route::get('employees/{id}', [UserController::class, 'show']);
+        Route::get('employees/id/{id}', [UserController::class, 'show']);
 
         // Returns All Employees By Name Referance
         Route::get('employees/name/{name}', [UserController::class, 'findByName']);
@@ -203,7 +200,7 @@
         Route::get('employees/visa/{visa}', [UserController::class, 'findByVisa']);
 
         // Image Upload
-        Route::post('employees/upload', [UserController::class, 'dummyUpdate']);
+        // Route::post('employees/upload', [UserController::class, 'dummyUpdate']);
 
     //-------------------------------------------------------------------------
     //  Statistics Routes
@@ -247,7 +244,7 @@
         Route::get('notes/all', [NotesController::class, 'index']);  // NO FUNCTION IN CONTROLLER
 
         // Fixed Function : Get A Note By Its ID
-        Route::get('notes/{id}', [NotesController::class, 'show']);  // NOT WORKING
+        Route::get('notes/id/{id}', [NotesController::class, 'show']);  // NOT WORKING
 
         // Fixed Function : Add Notes To Employees
         Route::post('notes/add', [NotesController::class, 'store']);
@@ -269,10 +266,10 @@
         Route::get('visas/all', [VisasController::class, 'index']);    
     
         // Fixed Function : Get A Note By Its ID
-        Route::get('visas/{id}', [VisasController::class, 'show']);
+        Route::get('visas/id/{id}', [VisasController::class, 'show']);
 
         // Fixed Function : Add Notes To Employees
-        Route::post('visas/new', [VisasController::class, 'store']);
+        Route::post('visas/add', [VisasController::class, 'store']);
 
         // Fixed Function : Get Employees Nationality Count & Percentages
         Route::put('visas/update/{id}', [VisasController::class, 'update']);
@@ -288,10 +285,10 @@
         Route::get('companies/all', [CompaniesController::class, 'index']);
 
         // Fixed Function : Get A Note By Its ID
-        Route::get('companies/{id}', [CompaniesController::class, 'show']);
+        Route::get('companies/id/{id}', [CompaniesController::class, 'show']);
 
         // Fixed Function : Add Notes To Employees
-        Route::post('companies/new', [CompaniesController::class, 'store']);
+        Route::post('companies/add', [CompaniesController::class, 'store']);
 
         // Fixed Function : Delete A Note By Its ID
         Route::delete('companies/delete/{id}', [CompaniesController::class, 'destroy'])->name('delete.note');
@@ -307,4 +304,4 @@
         // Employee Logout
         Route::post('/logout', [AuthController::class, 'logout']);  
 
-    }); // Dont Touch Me
+    // }); // Dont Touch Me

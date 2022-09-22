@@ -310,6 +310,7 @@ class ReportsController extends Controller
         $query = ("
             SELECT
                 if(users.gender = 'M', 'male', 'female') as 'gender',
+                count(*) as 'count',
                 ROUND((count(*)/(select count(*) from users)) * 100, 1) as 'percentage'
             FROM
                 users
@@ -339,7 +340,8 @@ class ReportsController extends Controller
         $query = ("
                     SELECT
                         passports.state,
-                        count(*) as 'count'
+                        count(*) as 'count',
+                        ROUND((count(*)/(select distinct count(*) from employees_passport_transactions)) * 100, 1) as 'percentage'
                     FROM
                         (
                             SELECT
