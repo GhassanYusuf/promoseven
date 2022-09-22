@@ -58,13 +58,13 @@
     // Route::group(['middleware'=> ['auth:sanctum']], function () {
 
         // Show all Leaves Regardsless Of Status
-        Route::get('leaves/all', [LeavesController::class, 'index']);               // Not Working
+        Route::get('leaves/all', [LeavesController::class, 'index']);
 
         // Get All Pending Leaves
         Route::get('leaves/pending/all', [LeavesController::class, 'pendingReq']);
 
         // Get Leaves Of an Employee By ID
-        Route::get('leaves/id/{id}', [LeavesController::class, 'show']);               // Select By Employee ID
+        Route::get('leaves/id/{id}', [LeavesController::class, 'show']);
 
         // Get All Valid Leaves Request By Employee ID
         Route::get('leaves/valid/{id}', [LeavesController::class, 'valid']);
@@ -73,15 +73,13 @@
         Route::get('leaves/duration/{id}/{start}/{end}', [LeavesController::class, 'findByDuration']);
 
         // Create A New Leave Request
-        Route::post('leaves/add', [LeavesController::class, 'store']);              // Not Working
+        Route::post('leaves/add', [LeavesController::class, 'store']);
 
         // Update Leaves Of an Employee By ID
-        Route::put('leaves/update/{id}', [LeavesController::class, 'update']);      // Not Working
+        Route::put('leaves/update/{id}', [LeavesController::class, 'update']);
 
         // Delete A Leave Request By ID
         Route::delete('leaves/delete/{id}', [LeavesController::class, 'destroy']);
-
-        
 
     //-------------------------------------------------------------------------
     //  Announcements Routes
