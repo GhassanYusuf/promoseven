@@ -36,7 +36,8 @@ class VisasController extends Controller
      */
 
     public function store(Request $request) {
-        //
+        $result = employees_visas::create($request->all());
+        return $result;
     }
 
     /**

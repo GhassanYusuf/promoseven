@@ -47,36 +47,41 @@
     // Sanctum Register
     Route::post('/register', [AuthController::class, 'register']);
 
+    // Employee Logout
+    // Route::post('/logout', [AuthController::class, 'logout']); 
+
 //=========================================================================
 //  Protected Routes
 //=========================================================================
 
     // Protected Routes
-    // Route::group(['middleware'=> ['auth:sanctum']], function () {
+    Route::group(['middleware'=> ['auth:sanctum']], function () {
 
         // Show all Leaves Regardsless Of Status
-        Route::get('leaves/', [LeavesController::class, 'index']);        // Not Working
-
-        // Create A New Leave Request
-        Route::post('leaves/', [LeavesController::class, 'store']);       // Not Working
-
-        // Get Leaves Of an Employee By ID
-        Route::get('leaves/{id}', [LeavesController::class, 'show']);     // Select By Employee ID
-
-        // Update Leaves Of an Employee By ID
-        Route::put('leaves/{id}', [LeavesController::class, 'update']);   // Not Working
+        Route::get('leaves/all', [LeavesController::class, 'index']);               // Not Working
 
         // Get All Pending Leaves
         Route::get('leaves/pending', [LeavesController::class, 'pendingReq']);
 
-        // Delete A Leave Request By ID
-        Route::delete('leaves/{id}', [LeavesController::class, 'destroy']);
+        // Get Leaves Of an Employee By ID
+        Route::get('leaves/{id}', [LeavesController::class, 'show']);               // Select By Employee ID
 
         // Get All Valid Leaves Request By Employee ID
         Route::get('leaves/valid/{id}', [LeavesController::class, 'valid']);
 
         // Get All Leaves Request Between Duration Of A Specific Employee
         Route::get('leaves/duration/{id}/{start}/{end}', [LeavesController::class, 'findByDuration']);
+
+        // Create A New Leave Request
+        Route::post('leaves/new', [LeavesController::class, 'store']);              // Not Working
+
+        // Update Leaves Of an Employee By ID
+        Route::put('leaves/update/{id}', [LeavesController::class, 'update']);      // Not Working
+
+        // Delete A Leave Request By ID
+        Route::delete('leaves/{id}', [LeavesController::class, 'destroy']);
+
+        
 
     //-------------------------------------------------------------------------
     //  Announcements Routes
@@ -267,13 +272,13 @@
         Route::get('visas/{id}', [VisasController::class, 'show']);
 
         // Fixed Function : Add Notes To Employees
-        Route::post('visas/add', [VisasController::class, 'store']);
-
-        // Fixed Function : Delete A Note By Its ID
-        Route::delete('visas/delete/{id}', [VisasController::class, 'destroy'])->name('delete.note');
+        Route::post('visas/new', [VisasController::class, 'store']);
 
         // Fixed Function : Get Employees Nationality Count & Percentages
         Route::put('visas/update/{id}', [VisasController::class, 'update']);
+
+        // Fixed Function : Delete A Note By Its ID
+        Route::delete('visas/delete/{id}', [VisasController::class, 'destroy'])->name('delete.note');
 
     //-------------------------------------------------------------------------
     //  Companies Routes
@@ -286,7 +291,7 @@
         Route::get('companies/{id}', [CompaniesController::class, 'show']);
 
         // Fixed Function : Add Notes To Employees
-        Route::post('companies/add', [CompaniesController::class, 'store']);
+        Route::post('companies/new', [CompaniesController::class, 'store']);
 
         // Fixed Function : Delete A Note By Its ID
         Route::delete('companies/delete/{id}', [CompaniesController::class, 'destroy'])->name('delete.note');
@@ -302,4 +307,4 @@
         // Employee Logout
         Route::post('/logout', [AuthController::class, 'logout']);  
 
-    // }); // Dont Touch Me
+    }); // Dont Touch Me
