@@ -86,6 +86,9 @@
         Route::get('announcements/', [AnnouncementsController::class, 'index']);
 
         // Get An Announcements By ID
+        Route::get('/announcements/valid', [AnnouncementsController::class, 'valid']);
+
+        // Get An Announcements By ID
         Route::get('announcements/{id}', [AnnouncementsController::class, 'show']);
 
         // Get All Announcements By Title Content
@@ -93,9 +96,6 @@
 
         // Get All Announcements By Body Content
         Route::get('announcements/body/{body}', [AnnouncementsController::class, 'findByBody']);
-
-        // Get An Announcements By ID
-        Route::get('/announcements/valid', [AnnouncementsController::class, 'valid']);
 
         // Get All Announcements Between Duration
         Route::get('announcements/duration/{start}/{end}', [AnnouncementsController::class, 'findByDuration']);
