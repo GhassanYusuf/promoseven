@@ -47,15 +47,12 @@
     // Sanctum Register
     Route::post('/register', [AuthController::class, 'register']);
 
-    // Employee Logout
-    // Route::post('/logout', [AuthController::class, 'logout']); 
+    // Protected Routes
+    // Route::group(['middleware'=> ['auth:sanctum']], function () {
 
 //=========================================================================
 //  Protected Routes
 //=========================================================================
-
-    // Protected Routes
-    // Route::group(['middleware'=> ['auth:sanctum']], function () {
 
         // Show all Leaves Regardsless Of Status
         Route::get('leaves/all', [LeavesController::class, 'index']);
