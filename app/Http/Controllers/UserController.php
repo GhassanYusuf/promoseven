@@ -354,7 +354,7 @@ class UserController extends Controller
     }
 
 //--------------------------------------------------------------------
-//  Search Routes
+//  Search Routes By (name or cpr or passport or email)
 //--------------------------------------------------------------------
 
     // Search Between People Who Still Working In The Company
@@ -513,6 +513,157 @@ class UserController extends Controller
 
     }
 
+    // Search Between People Who Have Incomplete Profile
+    public function search_incomplete($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+                                WHERE
+                                    users.end_date IS NULL
+                                    AND
+                                    (
+                                        users.name like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.cpr like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.passport like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.email like concat('%', '" . $info . "', '%')
+                                    )
+                                    AND
+                                    (
+                                        passport IS NULL OR
+                                        passport_expire IS NULL OR
+                                        cpr IS NULL OR
+                                        cpr_expire IS NULL OR
+                                        company IS NULL OR
+                                        (visa IS NULL AND nationality <> 'BHR') OR
+                                        (visa_expire IS NULL AND nationality <> 'BHR')
+                                    )
+                                ORDER BY
+                                    users.name, company.name, country.name ASC
+                                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search Between People Who Kept Their Passports With Us
+    public function search_deposits($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = (" 
+                    SELECT
+                        *
+                    FROM
+                        (
+                            " . $this->emp . "
+                            WHERE
+                                users.nationality <> 'BHR'
+                            ORDER BY
+                                users.name, company.name, country.name ASC
+                        ) as users
+                    WHERE
+                        (
+                            users.name like concat('%', '" . $info . "', '%')
+                            OR
+                            JSON_EXTRACT(users.cpr, '$.id') like concat('%', '" . $info . "', '%')
+                            OR
+                            JSON_EXTRACT(users.passport, '$.id') like concat('%', '" . $info . "', '%')
+                            OR
+                            JSON_EXTRACT(users.contact, '$.email') like concat('%', '" . $info . "', '%')
+                        )
+                        AND
+                        JSON_EXTRACT(users.passport, '$.state') = 'IN'
+                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // This Is A Response If No Data
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search Between People Who Are Male Gendered
+    public function search_male($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+                                WHERE
+                                    users.end_date IS NULL
+                                    AND
+                                    (
+                                        users.name like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.cpr like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.passport like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.email like concat('%', '" . $info . "', '%')
+                                    )
+                                    AND
+                                    ( 
+                                        users.gender = 'M' 
+                                        OR 
+                                        users.gender = 'MALE'
+                                    )
+                                ORDER BY
+                                    users.name, company.name, country.name ASC
+                                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search Between People Who Are female Gendered
+    public function search_female($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+                                WHERE
+                                    users.end_date IS NULL
+                                    AND
+                                    (
+                                        users.name like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.cpr like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.passport like concat('%', '" . $info . "', '%')
+                                        OR
+                                        users.email like concat('%', '" . $info . "', '%')
+                                    )
+                                    AND
+                                    ( 
+                                        users.gender = 'F' 
+                                        OR 
+                                        users.gender = 'FEMALE'
+                                    )
+                                ORDER BY
+                                    users.name, company.name, country.name ASC
+                                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
     // Search Between People Who Have Left The Company
     public function search_ex($info) {
 
@@ -549,6 +700,10 @@ class UserController extends Controller
 
     }
 
+//--------------------------------------------------------------------
+//  Search By A Specific Field
+//--------------------------------------------------------------------
+
     // Search People By Name
     public function search_name($name) {
 
@@ -569,7 +724,7 @@ class UserController extends Controller
     }
 
     // Search People By CPR
-    public function search_CPR($cpr) {
+    public function search_cpr($cpr) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" WHERE users.cpr LIKE concat('%', ?, '%') ORDER BY users.name ASC");

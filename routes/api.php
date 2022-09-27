@@ -134,17 +134,20 @@
         // Fixed Function : Employees Passports In Deposits
         Route::get('employees/passport/deposit/all', [UserController::class, 'deposits']);
 
+        // Fixed Function : Employees Passports In Deposits
+        Route::get('employees/passport/deposit/search/{input}', [UserController::class, 'search_deposits']);
+
         // Fixed Function : Get All Male Employees
         Route::get('employees/male/all', [UserController::class, 'males']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/male/search/{input}', [UserController::class, 'males']);
+        Route::get('employees/male/search/{input}', [UserController::class, 'search_male']);
 
         // Fixed Function : Get All Female Employees
         Route::get('employees/female/all', [UserController::class, 'females']);
 
         // Fixed Function : Get All Female Employees
-        Route::get('employees/female/search/{input}', [UserController::class, 'females']);
+        Route::get('employees/female/search/{input}', [UserController::class, 'search_female']);
 
         // Fixed Function : Get All Native Employees
         Route::get('employees/native/all', [UserController::class, 'native']);
@@ -168,7 +171,7 @@
         Route::get('employees/incomplete/all', [UserController::class, 'incomplete']);
 
         // Fixed Function : Employees With Incomplete Profiles
-        Route::get('employees/incomplete/search/{input}', [UserController::class, 'incomplete']);
+        Route::get('employees/incomplete/search/{input}', [UserController::class, 'search_incomplete']);
 
         // Create A New Employee
         Route::post('employees/add', [UserController::class, 'store']);
@@ -186,7 +189,7 @@
         Route::get('employees/name/{name}', [UserController::class, 'search_name']);
 
         // Returns All Employees By Name Referance
-        Route::get('employees/cpr/{cpr}', [UserController::class, 'search_CPR']);
+        Route::get('employees/cpr/{cpr}', [UserController::class, 'search_cpr']);
 
         // Returns All Employees By Company Referance
         Route::get('employees/company/{company}', [UserController::class, 'search_company']);
