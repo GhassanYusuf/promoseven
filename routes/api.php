@@ -123,7 +123,7 @@
         Route::get('employees/ex/all', [UserController::class, 'ex']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/ex/search/{input}', [UserController::class, 'exemp']);
+        Route::get('employees/ex/search/{input}', [UserController::class, 'search_ex']);
 
         // Fixed Function : Get All Passport Transactions
         Route::get('employees/passport/all', [PassportsController::class, 'index']);
@@ -150,19 +150,19 @@
         Route::get('employees/native/all', [UserController::class, 'native']);
 
         // Fixed Function : Get All Native Employees
-        Route::get('employees/native/search/{input}', [UserController::class, 'native']);
+        Route::get('employees/native/search/{input}', [UserController::class, 'search_native']);
 
         // Fixed Function : Get All Expatriates Employees
         Route::get('employees/expatriate/all', [UserController::class, 'expatriate']);
 
         // Fixed Function : Get All Expatriates Employees
-        Route::get('employees/expatriate/search/{input}', [UserController::class, 'expatriate']);
+        Route::get('employees/expatriate/search/{input}', [UserController::class, 'search_expatriate']);
 
         // Fixed Function : Employees Expiries
         Route::get('employees/expire/all', [UserController::class, 'expiries']);
 
         // Fixed Function : Employees Expiries
-        Route::get('employees/expire/search/{input}', [UserController::class, 'expiries']);
+        Route::get('employees/expire/search/{input}', [UserController::class, 'search_expire']);
 
         // Fixed Function : Employees With Incomplete Profiles
         Route::get('employees/incomplete/all', [UserController::class, 'incomplete']);
@@ -183,16 +183,16 @@
         Route::get('employees/id/{id}', [UserController::class, 'show']);
 
         // Returns All Employees By Name Referance
-        Route::get('employees/name/{name}', [UserController::class, 'findByName']);
+        Route::get('employees/name/{name}', [UserController::class, 'search_name']);
 
         // Returns All Employees By Name Referance
-        Route::get('employees/cpr/{cpr}', [UserController::class, 'findByCPR']);
+        Route::get('employees/cpr/{cpr}', [UserController::class, 'search_CPR']);
 
         // Returns All Employees By Company Referance
-        Route::get('employees/company/{company}', [UserController::class, 'findByCompany']);
+        Route::get('employees/company/{company}', [UserController::class, 'search_company']);
 
         // Returns All Employees By Visa Referance
-        Route::get('employees/visa/{visa}', [UserController::class, 'findByVisa']);
+        Route::get('employees/visa/{visa}', [UserController::class, 'search_visa']);
 
         // Image Upload
         // Route::post('employees/upload', [UserController::class, 'dummyUpdate']);
@@ -208,7 +208,7 @@
         Route::get('statistics/onleave', [ReportsController::class, 'OnLeaveLite']);
 
         // Fixed Function : Get Anniversary People Lite Information
-        Route::get('statistics/anniversary', [ReportsController::class, 'AnniversaryLite']);    // Need to Fixed - Should Be Only People Above One Year
+        Route::get('statistics/anniversary', [ReportsController::class, 'AnniversaryLite']);
 
         // Fixed Function : Get Probation People Lite Information
         Route::get('statistics/probation', [ReportsController::class, 'ProbationLite']);

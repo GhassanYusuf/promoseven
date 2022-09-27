@@ -125,11 +125,9 @@ class UserController extends Controller
                                     employees_visas as visa ON visa.id = users.visa
                         ");
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+//--------------------------------------------------------------------
+//  Direct Routes
+//--------------------------------------------------------------------
 
     public function index() {
 
@@ -144,12 +142,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     public function ex() {
 
         // Laravel Raw MySQL Methode
@@ -162,12 +154,6 @@ class UserController extends Controller
         return $results;
 
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     public function native() {
 
@@ -182,12 +168,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     public function expatriate() {
 
         // Laravel Raw MySQL Methode
@@ -200,12 +180,6 @@ class UserController extends Controller
         return $results;
 
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     public function expiries() {
 
@@ -233,12 +207,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     public function incomplete() {
 
         // Laravel Raw MySQL Methode
@@ -262,13 +230,6 @@ class UserController extends Controller
         return $results;
 
     }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $cpr
-     * @return \Illuminate\Http\Response
-     */
 
     public function deposits() {
 
@@ -301,12 +262,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     public function males() {
 
         // Laravel Raw MySQL Methode
@@ -331,12 +286,6 @@ class UserController extends Controller
         return $results;
 
     }
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     public function females() {
 
@@ -363,13 +312,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-
     public function store(Request $request) {
 
         // Basic Requirments For Any New Employee
@@ -393,13 +335,6 @@ class UserController extends Controller
         
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
     public function show($id) {
 
         // Laravel Raw MySQL Methode
@@ -418,18 +353,19 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @param  string  $name
-     * @return \Illuminate\Http\Response
-     */
+//--------------------------------------------------------------------
+//  Search Routes
+//--------------------------------------------------------------------
 
+    // Search Between People Who Still Working In The Company
     public function search($info) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
             WHERE 
+                users.end_date IS NULL
+                AND
+                (
                 users.name like concat('%', '" . $info . "', '%')
                 OR
                 users.cpr like concat('%', '" . $info . "', '%')
@@ -437,6 +373,7 @@ class UserController extends Controller
                 users.passport like concat('%', '" . $info . "', '%')
                 OR
                 users.email like concat('%', '" . $info . "', '%')
+                )
             ORDER BY 
                 users.name, 
                 company.name, 
@@ -456,14 +393,164 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @param  string  $name
-     * @return \Illuminate\Http\Response
-     */
+    // Search Between People Who Are Natives
+    public function search_native($info) {
 
-    public function findByName($name) {
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+            WHERE
+                country.iso3 = 'BHR'
+                AND
+                (
+                    users.name like concat('%', '" . $info . "', '%')
+                    OR
+                    users.cpr like concat('%', '" . $info . "', '%')
+                    OR
+                    users.passport like concat('%', '" . $info . "', '%')
+                    OR
+                    users.email like concat('%', '" . $info . "', '%')
+                )
+                AND
+                users.end_date IS NULL
+            ORDER BY 
+                users.name, 
+                company.name, 
+                country.name ASC
+        ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search Between People Who Are Expatriate
+    public function search_expatriate($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+            WHERE
+                country.iso3 <> 'BHR'
+                AND
+                (
+                    users.name like concat('%', '" . $info . "', '%')
+                    OR
+                    users.cpr like concat('%', '" . $info . "', '%')
+                    OR
+                    users.passport like concat('%', '" . $info . "', '%')
+                    OR
+                    users.email like concat('%', '" . $info . "', '%')
+                )
+                AND
+                users.end_date IS NULL
+            ORDER BY 
+                users.name, 
+                company.name, 
+                country.name ASC
+        ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search Between People Who Have Expire Documents
+    public function search_expire($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+            WHERE
+                users.end_date IS NULL
+                AND
+                (
+                    users.name like concat('%', '" . $info . "', '%')
+                    OR
+                    users.cpr like concat('%', '" . $info . "', '%')
+                    OR
+                    users.passport like concat('%', '" . $info . "', '%')
+                    OR
+                    users.email like concat('%', '" . $info . "', '%')
+                )
+                AND
+                (
+                    users.cpr_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
+                    OR
+                    users.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH)
+                    OR
+                    users.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
+                )
+            ORDER BY 
+                users.name, 
+                company.name, 
+                country.name ASC
+        ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search Between People Who Have Left The Company
+    public function search_ex($info) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" 
+            WHERE
+                (
+                    users.name like concat('%', '" . $info . "', '%')
+                    OR
+                    users.cpr like concat('%', '" . $info . "', '%')
+                    OR
+                    users.passport like concat('%', '" . $info . "', '%')
+                    OR
+                    users.email like concat('%', '" . $info . "', '%')
+                )
+                AND
+                users.end_date IS NOT NULL
+            ORDER BY 
+                users.name, 
+                company.name, 
+                country.name ASC
+        ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search People By Name
+    public function search_name($name) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" WHERE users.name like concat('%', ?, '%') ORDER BY users.name, company.name, country.name ASC");
@@ -481,14 +568,8 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @param  string  $name
-     * @return \Illuminate\Http\Response
-     */
-
-    public function findByCPR($cpr) {
+    // Search People By CPR
+    public function search_CPR($cpr) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" WHERE users.cpr LIKE concat('%', ?, '%') ORDER BY users.name ASC");
@@ -506,14 +587,8 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @param  string  $name
-     * @return \Illuminate\Http\Response
-     */
-
-    public function findByPassport($passport) {
+    // Search People By Passport
+    public function search_passport($passport) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" WHERE users.passport LIKE concat('%', ?, '%') ORDER BY users.name ASC");
@@ -531,14 +606,8 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @param  string  $company
-     * @return \Illuminate\Http\Response
-     */
-
-    public function findByCompany($company) {
+    // Search By Company
+    public function search_company($company) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" WHERE company.name like concat('%', ?, '%') ORDER BY company.name, users.name, country.name ASC");
@@ -556,14 +625,8 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @param  string  $name
-     * @return \Illuminate\Http\Response
-     */
-
-    public function findByVisa($visa) {
+    // Search By Visa Source
+    public function search_visa($visa) {
 
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" WHERE visa.name like concat('%', ?, '%') ORDER BY users.name, company.name, country.name ASC");
@@ -581,11 +644,9 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
+//--------------------------------------------------------------------
+//  Charts Routes
+//--------------------------------------------------------------------
 
     public function ChartNationality() {
 
@@ -620,12 +681,6 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Find specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     public function ChartCompany() {
 
         // Laravel Raw MySQL Methode
@@ -656,12 +711,6 @@ class UserController extends Controller
         return $results;
 
     }
-
-    /**
-     * Find specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
 
     public function ChartVisa() {
 
@@ -694,13 +743,9 @@ class UserController extends Controller
 
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+//--------------------------------------------------------------------
+//  Update Routes
+//--------------------------------------------------------------------
 
     public function update(Request $request, $id) {
         $user = User::find($id);
@@ -710,23 +755,17 @@ class UserController extends Controller
         return $user;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+//--------------------------------------------------------------------
+//  Terminate Routes
+//--------------------------------------------------------------------
 
     public function terminate(Request $request, $id) {
         return User::destroy($id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+//--------------------------------------------------------------------
+//  Delete Routes
+//--------------------------------------------------------------------
 
     public function destroy($id) {
         return User::destroy($id);
