@@ -1,6 +1,6 @@
 <!-- The Modal -->
 <div class="modal" id="trModal">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <!-- Modal Header -->
             <div class="modal-header">

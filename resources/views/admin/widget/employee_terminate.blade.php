@@ -1,5 +1,5 @@
 <div class="modal" tabindex="-1" role="dialog" id="terminateModal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <form action="{{ URL('/') }}" method="post">
                 <input type="hidden" name="_token" value="IAco62EkgZYSoc0I1ctgFkZkRe2AFTirqfRdMEvL">

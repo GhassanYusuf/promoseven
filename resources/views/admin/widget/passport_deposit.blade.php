@@ -1,5 +1,5 @@
 <div class="modal mw-100" tabindex="-1" role="dialog" id="passdepositModal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
         <form action="http://192.168.5.178/promoseven-hr-hr/public/dashpassstate-store/390" method="post">
         <input type="hidden" name="_token" value="IAco62EkgZYSoc0I1ctgFkZkRe2AFTirqfRdMEvL">

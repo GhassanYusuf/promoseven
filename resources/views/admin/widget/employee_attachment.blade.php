@@ -1,7 +1,7 @@
 {{-- Edit Modal --}}
 
 <div class="modal" id="fileAttach" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <form action="{{ URL('/') }}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="_token" value="IAco62EkgZYSoc0I1ctgFkZkRe2AFTirqfRdMEvL">

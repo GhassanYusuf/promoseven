@@ -1,5 +1,5 @@
 <div class="modal" tabindex="-1" role="dialog" id="sendNewNotification">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
         <form action="{{ URL('/') }}" method="post">
             <input type="hidden" name="_token" value="IAco62EkgZYSoc0I1ctgFkZkRe2AFTirqfRdMEvL">
