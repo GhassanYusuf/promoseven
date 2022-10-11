@@ -173,6 +173,9 @@
         // Fixed Function : Employees With Incomplete Profiles
         Route::get('employees/incomplete/search/{input}', [UserController::class, 'search_incomplete']);
 
+        // Fixed Function : Employees With Incomplete Profiles
+        Route::get('employees/email/search/{input}', [UserController::class, 'search_email']);
+
         // Create A New Employee
         Route::post('employees/add', [UserController::class, 'store']);
 

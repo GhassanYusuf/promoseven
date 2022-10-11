@@ -34,6 +34,7 @@ class UserController extends Controller
                             JSON_OBJECT(
                                 'company', UPPER(company.name),
                                 'position', UPPER(position),
+                                'accessLevel', UPPER(users.accesslevel),
                                 'start', users.join_date,
                                 'end', users.end_date,
                                 'experiance', JSON_OBJECT(
@@ -712,6 +713,25 @@ class UserController extends Controller
 
         // Executing The Query
         $results = DB::select($query, [$name]);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Search People By Passport
+    public function search_email($email) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" WHERE users.email = ?");
+
+        // Executing The Query
+        $results = DB::select($query, [$email]);
 
         // If No Results
         if(sizeOf($results) == 0) {
