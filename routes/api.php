@@ -48,7 +48,7 @@
     Route::post('/register', [AuthController::class, 'register']);
 
     // Protected Routes
-    // Route::group(['middleware'=> ['auth:sanctum']], function () {
+    Route::group(['middleware'=> ['auth:sanctum']], function () {
 
 //=========================================================================
 //  Protected Routes
@@ -305,4 +305,4 @@
         // Employee Logout
         Route::post('/logout', [AuthController::class, 'logout']);  
 
-    // }); // Dont Touch Me
+    }); // Dont Touch Me
