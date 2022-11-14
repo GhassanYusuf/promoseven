@@ -22,7 +22,7 @@
     // Include Employees Controller
     use App\Http\Controllers\ReportsController;
 
-    // Include Employees Controller
+    // Include Employees Controller 
     use App\Http\Controllers\PassportsController;
 
     // Include Employees Controller
