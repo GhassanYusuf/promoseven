@@ -47,6 +47,12 @@
     // Sanctum Register
     Route::post('/register', [AuthController::class, 'register']);
 
+    // Image Upload
+    Route::post('/image/upload/{id}', [UserController::class, 'upload']);
+
+    // Dummy Update
+    Route::put('/dummyupdate/{id}', [UserController::class, 'updatePicture']);
+
     // Protected Routes
     Route::group(['middleware'=> ['auth:sanctum']], function () {
 

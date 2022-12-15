@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -353,6 +354,71 @@ class UserController extends Controller
         return $results;
 
     }
+
+    public function upload(Request $request, $id){
+ 
+        $validator = Validator::make($request->all(),[ 
+            // 'file' => 'required|mimes:doc,docx,pdf,txt,csv|max:2048',
+            'picture'  => 'required|mimes:png,jpg,jpeg,gif',
+        ]);     
+
+ 
+        if($validator->fails()) {          
+            return response()->json(['error'=>$validator->errors()], 401);                        
+         }
+ 
+  
+        if ($picture = $request->file('picture')) {
+
+
+            $picture = $request->file('picture');
+            $name = $picture->getClientOriginalName();
+            $fileName = $picture->storeAs('public/dist/img', $name);
+            $destinationPath = public_path().'/dist/img';
+            $picture->move($destinationPath, $fileName);
+
+            // $name = $picture->getClientOriginalName();
+            // $path = $picture->storeAs('/public/dist/img', $name);
+            // $path = $file->store('public/files');
+            // $name = $file->file('zea01010')->storeAs('directory_name', time().'.jpg');
+        
+            // $save = new User();
+            // $save = $picture;
+            // $save->picture = $picture;
+            // $save->save();
+
+            $this->updatePicture($fileName, $id);
+
+            return response()->json([
+                "success" => true,
+                "message" => "File successfully uploaded",
+                "picture" => $picture
+            ]);
+  
+        }
+ 
+  
+    }
+
+    public function updatePicture($path, $id) {
+
+        // Laravel Raw MySQL Methode
+        $query = "UPDATE users SET users.picture = ? WHERE id = ?";
+
+        // Executing The Query
+        $results = DB::update($query, [$path, $id]);
+
+        // Return The Results
+        return $results;
+
+        // $user = User::find($id);
+
+        // $user->update($request->all());
+        
+        // return $user;
+
+    }
+
 
 //--------------------------------------------------------------------
 //  Search Routes By (name or cpr or passport or email)
