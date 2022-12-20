@@ -37,6 +37,9 @@
     // Sanctum Companies Controller
     use App\Http\Controllers\CompaniesController;
 
+    // Sanctum Companies Controller
+    use App\Http\Controllers\CountriesController;
+
 //=========================================================================
 //  Public Routes
 //=========================================================================
@@ -303,6 +306,15 @@
         // Fixed Function : Get Employees Nationality Count & Percentages
         Route::put('companies/update/{id}', [CompaniesController::class, 'update']);
         
+    //-------------------------------------------------------------------------
+    //  Countries Routes
+    //-------------------------------------------------------------------------
+
+        // Fixed Function : Get A Note By Its ID
+        Route::get('countries/all', [CountriesController::class, 'index']);
+
+        // Fixed Function : Get A Note By Its ID
+        Route::get('countries/id/{id}', [CountriesController::class, 'show']);
 
 //=========================================================================
 //  End Of Protected Routes
