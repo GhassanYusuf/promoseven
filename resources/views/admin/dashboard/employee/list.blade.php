@@ -112,7 +112,7 @@
 
                                 <div class="card-tools">
                                     <div class="input-group input-group-sm">
-                                        <input type="text" class="form-control" placeholder="Search" id="search" name="search">
+                                        <input type="text" class="form-control" placeholder="Search Mail">
                                         <div class="input-group-append">
                                             <div class="btn btn-{{ $color }}">
                                                 <i class="fas fa-search"></i>
@@ -242,15 +242,15 @@
                                                                 <b>Quick Action</b>
                                                             </button>
                                                             <div class="dropdown-menu bg-white">
-                                                                <a class="dropdown-item" href="{{ URL('/employees/' . $employee->id) }}"><span class="text-dark"><i class="fas fa-eye mr-1"></i>View</span></a>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#fileAttach"><span class="text-dark"><i class="fas fa-paperclip mr-1"></i>Attach File</span></a>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#editModal"><span class="text-dark"><i class="fas fa-pen mr-1"></i>Edit</span></a>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#leaveModal"><span class="text-dark"><i class="fas fa-plane-departure mr-1"></i>Apply Leave</span></a>
+                                                                <a class="dropdown-item" href="{{ URL('/employees/' . $employee->id) }}"><span class="text-primary"><i class="fas fa-eye mr-1"></i>View</span></a>
+                                                                <a class="dropdown-item" href="#"><span class="text-primary"><i class="fas fa-paperclip mr-1"></i>Attach File</span></a>
+                                                                <a class="dropdown-item" href="#"><span class="text-primary"><i class="fas fa-pen mr-1"></i>Edit</span></a>
+                                                                <a class="dropdown-item" href="#"><span class="text-primary"><i class="fas fa-plane-departure mr-1"></i>Apply Leave</span></a>
                                                                 <div class="dropdown-divider"></div>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#passwithdrawlModal"><span class="text-info"><i class="fa fa-arrow-up mr-1"></i><i class="fa fa-passport mr-1"></i>Withdraw</span></a>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#passdepositModal"><span class="text-success"><i class="fa fa-arrow-down mr-1"></i><i class="fa fa-passport mr-1"></i>Deposit</span></a>
+                                                                <a class="dropdown-item" href="#"><span class="text-warning"><i class="fa fa-arrow-up mr-1"></i><i class="fa fa-passport mr-1"></i>Withdraw</span></a>
+                                                                <a class="dropdown-item" href="#"><span class="text-success"><i class="fa fa-arrow-down mr-1"></i><i class="fa fa-passport mr-1"></i>Deposit</span></a>
                                                                 <div class="dropdown-divider"></div>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#terminateModal"><span class="text-danger"><i class="fas fa-user-slash mr-1"></i>Terminate</span></a>
+                                                                <a class="dropdown-item" href="#"><span class="text-danger"><i class="fas fa-user-slash mr-1"></i>Terminate</span></a>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -284,38 +284,6 @@
                 </div>
 
             </div>
-
-
-            {{-- Widget Terminate Modal --}}
-            @include('admin.widget.employee_terminate')
-
-            {{-- Widget Passport Deposit Modal --}}
-            @include('admin.widget.passport_deposit')
-
-            {{-- Widget Passport Withdrawl Modal --}}
-            @include('admin.widget.passport_withdraw')
-
-            {{-- Widget View Leaves --}}
-            @include('admin.widget.leave_view')
-
-            {{-- Widget Apply Leaves --}}
-            @include('admin.widget.leave_apply')
-
-            {{-- Widget View Passport Transaction History --}}
-            @include('admin.widget.passport_view')
-
-            {{-- Widget Employee Edit Modal --}}
-            @include('admin.widget.employee_notify')
-
-            {{-- Widget Employee Edit Modal --}}
-            @include('admin.widget.employee_attachment')
-
-            {{-- Widget Add New Note --}}
-            @include('admin.widget.notes_add')
-
-            {{-- Widget Edit New Note --}}
-            @include('admin.widget.notes_edit')
-
 
         </section>
 
