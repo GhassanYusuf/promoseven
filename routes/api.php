@@ -37,6 +37,9 @@
     // Sanctum Companies Controller
     use App\Http\Controllers\CompaniesController;
 
+    // Companies Departments
+    use App\Http\Controllers\CompaniesDepartments;
+
     // Sanctum Companies Controller
     use App\Http\Controllers\CountriesController;
 
@@ -68,6 +71,15 @@
 
         // Get All Pending Leaves
         Route::get('leaves/pending/all', [LeavesController::class, 'pendingReq']);
+
+        // Get All Approved Leaves
+        Route::get('leaves/approved/all', [LeavesController::class, 'approvedReq']);
+
+        // Get All Rejected Leaves
+        Route::get('leaves/rejected/all', [LeavesController::class, 'rejectedReq']);
+
+        // Get All Canceled Leaves
+        Route::get('leaves/canceled/all', [LeavesController::class, 'canceledReq']);
 
         // Get Leaves Of an Employee By ID
         Route::get('leaves/id/{id}', [LeavesController::class, 'show']);
@@ -305,7 +317,26 @@
 
         // Fixed Function : Get Employees Nationality Count & Percentages
         Route::put('companies/update/{id}', [CompaniesController::class, 'update']);
-        
+
+    //-------------------------------------------------------------------------
+    //  Departments Routes
+    //-------------------------------------------------------------------------
+
+        // Fixed Function : Get A Note By Its ID
+        Route::get('departments/all', [CompaniesDepartments::class, 'index']);
+
+        // Fixed Function : Get A Note By Its ID
+        Route::get('departments/id/{id}', [CompaniesDepartments::class, 'show']);
+
+        // Fixed Function : Add Notes To Employees
+        Route::post('departments/add', [CompaniesDepartments::class, 'store']);
+
+        // Fixed Function : Delete A Note By Its ID
+        Route::delete('departments/delete/{id}', [CompaniesDepartments::class, 'destroy']);
+
+        // Fixed Function : Get Employees Nationality Count & Percentages
+        Route::put('departments/update/{id}', [CompaniesDepartments::class, 'update']);
+
     //-------------------------------------------------------------------------
     //  Countries Routes
     //-------------------------------------------------------------------------

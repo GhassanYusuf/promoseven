@@ -108,6 +108,7 @@ class ReportsController extends Controller
         $query = ("
                     SELECT 
                         applier.id as 'id',
+                        applier.cpr as 'cpr',
                         applier.picture as 'picture',
                         applier.name as 'name',
                         applier.gender as 'gender',
@@ -149,6 +150,7 @@ class ReportsController extends Controller
         $query = ("
                     SELECT 
                         users.id as 'id',
+                        users.cpr as 'cpr',
                         users.picture as 'picture',
                         users.name as 'name',
                         users.position as 'position',
@@ -192,6 +194,7 @@ class ReportsController extends Controller
         $query = ("
                     SELECT 
                         users.id as 'id',
+                        users.cpr as 'cpr',
                         users.picture as 'picture',
                         users.name as 'name',
                         users.gender as 'gender',
@@ -235,6 +238,7 @@ class ReportsController extends Controller
         $query = ("
                     SELECT 
                         users.id as 'id',
+                        users.cpr as 'cpr',
                         users.picture as 'picture',
                         users.name as 'name',
                         users.gender as 'gender',

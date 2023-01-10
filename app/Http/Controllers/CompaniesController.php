@@ -36,7 +36,10 @@ class CompaniesController extends Controller
 
     public function store(Request $request) {
         
+        // Query
         $result = companies::create($request->all());
+
+        // Return The Result
         return $result;
 
     }
@@ -90,8 +93,10 @@ class CompaniesController extends Controller
      */
 
     public function destroy($id) {
+
         // Deleteing The Note By Its ID
         return companies::destroy($id);
+
     }
 
 }

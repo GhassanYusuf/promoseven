@@ -54,7 +54,6 @@ class LeavesController extends Controller
             (
                 CASE
                 WHEN leaves.approval IS NULL THEN 'PENDING'
-                WHEN leaves.approval = 'P' THEN 'PENDING'
                 WHEN leaves.approval = 'A' THEN 'APPROVED'
                 WHEN leaves.approval = 'R' THEN 'REJECTED'
                 WHEN leaves.approval = 'C' THEN 'CANCELED'
@@ -107,8 +106,72 @@ class LeavesController extends Controller
         $query = $this->leavesQuery . ("
                     WHERE
                         leaves.approval IS NULL 
-                        OR
-                        leaves.approval = 'P'
+                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function approvedReq() {
+        
+        // Laravel Raw MySQL Methode
+        $query = $this->leavesQuery . ("
+                    WHERE
+                        leaves.approval = 'A'
+                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function rejectedReq() {
+        
+        // Laravel Raw MySQL Methode
+        $query = $this->leavesQuery . ("
+                    WHERE
+                        leaves.approval = 'R' 
+                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function canceledReq() {
+        
+        // Laravel Raw MySQL Methode
+        $query = $this->leavesQuery . ("
+                    WHERE
+                        leaves.approval = 'C' 
                 ");
 
         // Executing The Query

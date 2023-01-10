@@ -33,6 +33,7 @@ class UserController extends Controller
                             
                             /* Employment */
                             JSON_OBJECT(
+                                'id', company.id,
                                 'company', UPPER(company.name),
                                 'position', UPPER(position),
                                 'accessLevel', UPPER(users.accesslevel),
@@ -48,6 +49,7 @@ class UserController extends Controller
                             
                             /* VISA */
                             JSON_OBJECT(
+                                'id', visa.id,
                                 'company', UPPER(visa.name),
                                 'expire', users.visa_expire,
                                 'validity', JSON_OBJECT(
@@ -320,8 +322,7 @@ class UserController extends Controller
         $request->validate([
             'name'              => 'required',
             'accesslevel'       => 'required',
-            'email'             => 'required',
-            'contact'           => 'required',
+            // 'contact'           => 'required',
             'position'          => 'required',
             'company'           => 'required',
             'gender'            => 'required',
@@ -365,30 +366,24 @@ class UserController extends Controller
  
         if($validator->fails()) {          
             return response()->json(['error'=>$validator->errors()], 401);                        
-         }
+        }
  
-  
         if ($picture = $request->file('picture')) {
 
-
-            $picture = $request->file('picture');
-            $name = $picture->getClientOriginalName();
-            $fileName = $picture->storeAs('public/dist/img', $name);
-            $destinationPath = public_path().'/dist/img';
+            // Preparing Variables
+            $picture            = $request->file('picture');
+            $name               = $picture->getClientOriginalName();
+            $fileName           = $picture->storeAs('public/dist/img', $name);
+            $destinationPath    = public_path().'/dist/img';
             $picture->move($destinationPath, $fileName);
 
-            // $name = $picture->getClientOriginalName();
-            // $path = $picture->storeAs('/public/dist/img', $name);
-            // $path = $file->store('public/files');
-            // $name = $file->file('zea01010')->storeAs('directory_name', time().'.jpg');
-        
-            // $save = new User();
-            // $save = $picture;
-            // $save->picture = $picture;
-            // $save->save();
+            // Laravel Raw MySQL Methode
+            $query = "UPDATE users SET users.picture = ? WHERE id = ?";
 
-            $this->updatePicture($fileName, $id);
+            // Executing The Query
+            $results = DB::update($query, [$fileName, $id]);
 
+            // Return A Response
             return response()->json([
                 "success" => true,
                 "message" => "File successfully uploaded",
@@ -396,29 +391,9 @@ class UserController extends Controller
             ]);
   
         }
- 
+
   
     }
-
-    public function updatePicture($path, $id) {
-
-        // Laravel Raw MySQL Methode
-        $query = "UPDATE users SET users.picture = ? WHERE id = ?";
-
-        // Executing The Query
-        $results = DB::update($query, [$path, $id]);
-
-        // Return The Results
-        return $results;
-
-        // $user = User::find($id);
-
-        // $user->update($request->all());
-        
-        // return $user;
-
-    }
-
 
 //--------------------------------------------------------------------
 //  Search Routes By (name or cpr or passport or email)
