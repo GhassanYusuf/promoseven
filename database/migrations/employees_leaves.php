@@ -26,8 +26,10 @@ return new class extends Migration
             $table->string('flight_details', 45)->nullable();
             $table->string('contact_info', 45)->nullable();
             $table->String('note', 200)->nullable();
-            $table->enum('approval', ['A', 'R', 'P', 'C'])->nullable();         // Approved / Rejected / Pending / Canceled
-            $table->integer('approved_by')->nullable();
+            $table->enum('hApproval', ['A', 'R', 'C'])->nullable();         // Approved / Rejected / Pending / Canceled
+            $table->enum('mApproval', ['A', 'R', 'C'])->nullable();         // Approved / Rejected / Pending / Canceled
+            $table->integer('hApproved_by')->nullable();                    // HR That Approved The Leave
+            $table->integer('mApproved_by')->nullable();                    // Manager That Approved The Leave
             $table->timestamps();
         });
     }

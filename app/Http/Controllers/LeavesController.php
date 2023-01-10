@@ -32,7 +32,7 @@ class LeavesController extends Controller
             DATEDIFF(leaves.return_date, leaves.start_date) as 'leave_days',
             (
                 CASE
-                WHEN leaves.status IS NULL THEN 'PENDING'
+                WHEN leaves.status IS NULL THEN 'NOT YET LEFT'
                 WHEN leaves.status = 'L' THEN 'ON LEAVE'
                 WHEN leaves.status = 'R' THEN 'RETURNED'
                 END
@@ -53,14 +53,24 @@ class LeavesController extends Controller
             leaves.note,
             (
                 CASE
-                WHEN leaves.approval IS NULL THEN 'PENDING'
-                WHEN leaves.approval = 'A' THEN 'APPROVED'
-                WHEN leaves.approval = 'R' THEN 'REJECTED'
-                WHEN leaves.approval = 'C' THEN 'CANCELED'
+                WHEN leaves.hApproval IS NULL THEN 'PENDING'
+                WHEN leaves.hApproval = 'A' THEN 'APPROVED'
+                WHEN leaves.hApproval = 'R' THEN 'REJECTED'
+                WHEN leaves.hApproval = 'C' THEN 'CANCELED'
                 END
-            ) as 'approval',
+            ) as 'hApproval',
+            (
+                CASE
+                WHEN leaves.mApproval IS NULL THEN 'PENDING'
+                WHEN leaves.mApproval = 'A' THEN 'APPROVED'
+                WHEN leaves.mApproval = 'R' THEN 'REJECTED'
+                WHEN leaves.mApproval = 'C' THEN 'CANCELED'
+                END
+            ) as 'mApproval',
             hr.id as 'hr_id',
-            hr.name as 'hr_name'
+            hr.name as 'hr_name',
+            mg.id as 'm_id',
+            mg.name as 'm_name'
         FROM 
             employees_leaves as leaves
         LEFT JOIN 
@@ -68,8 +78,9 @@ class LeavesController extends Controller
         LEFT JOIN 
             users as substitute on substitute.id = leaves.employee_incharge
         LEFT JOIN 
-            users as hr on hr.id = leaves.approved_by
-    
+            users as hr on hr.id = leaves.hApproved_by
+        LEFT JOIN 
+            users as mg on mg.id = leaves.mApproved_by
     ");
 
     /**
@@ -105,7 +116,9 @@ class LeavesController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->leavesQuery . ("
                     WHERE
-                        leaves.approval IS NULL 
+                        leaves.hApproval IS NULL
+                        OR
+                        leaves.mApproval IS NULL
                 ");
 
         // Executing The Query
@@ -127,7 +140,9 @@ class LeavesController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->leavesQuery . ("
                     WHERE
-                        leaves.approval = 'A'
+                        leaves.hApproval = 'A'
+                        AND
+                        leaves.mApproval = 'A'
                 ");
 
         // Executing The Query
@@ -149,7 +164,9 @@ class LeavesController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->leavesQuery . ("
                     WHERE
-                        leaves.approval = 'R' 
+                        leaves.hApproval = 'R'
+                        OR
+                        leaves.mApproval = 'R'
                 ");
 
         // Executing The Query
@@ -171,7 +188,9 @@ class LeavesController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->leavesQuery . ("
                     WHERE
-                        leaves.approval = 'C' 
+                        leaves.hApproval = 'C'
+                        OR
+                        leaves.mApproval = 'C'
                 ");
 
         // Executing The Query
