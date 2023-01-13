@@ -35,6 +35,7 @@ class UserController extends Controller
                             JSON_OBJECT(
                                 'id', company.id,
                                 'company', UPPER(company.name),
+                                'department', UPPER(department.name),
                                 'position', UPPER(position),
                                 'accessLevel', UPPER(users.accesslevel),
                                 'start', users.join_date,
@@ -121,12 +122,14 @@ class UserController extends Controller
                         
                         FROM
                             users
-                                LEFT JOIN
-                                    countries as country ON country.iso3 = users.nationality
-                                LEFT JOIN
-                                    companies as company ON company.id = users.company
-                                LEFT JOIN
-                                    employees_visas as visa ON visa.id = users.visa
+                        LEFT JOIN
+                            countries as country ON country.iso3 = users.nationality
+                        LEFT JOIN
+                            companies_departments as department on department.id = users.department
+                        LEFT JOIN
+                            companies as company ON company.id = department.cid
+                        LEFT JOIN
+                            employees_visas as visa ON visa.id = users.visa
                         ");
 
 //--------------------------------------------------------------------

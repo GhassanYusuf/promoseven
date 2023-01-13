@@ -20,8 +20,10 @@ class employees_leaves extends Model
         'flight_details',
         'contact_info',
         'note',
-        'approval',
-        'approved_by',
+        'hApproval',
+        'mApproval',
+        'hApproved_by',
+        'mApproved_by',
     ];
 
 }

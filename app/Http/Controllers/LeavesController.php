@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\DB;
 class LeavesController extends Controller
 {
 
+    /**
+     * The Main Query
+     * 
+     */
+
     private $leavesQuery = ("
     
         SELECT 
@@ -111,13 +116,35 @@ class LeavesController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function pendingReq() {
+    public function list_hr_pending_req() {
         
         // Laravel Raw MySQL Methode
         $query = $this->leavesQuery . ("
                     WHERE
                         leaves.hApproval IS NULL
-                        OR
+                        AND
+                        leaves.mApproval = 'A'
+                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function list_manager_pending_req() {
+        
+        // Laravel Raw MySQL Methode
+        $query = $this->leavesQuery . ("
+                    WHERE
                         leaves.mApproval IS NULL
                 ");
 

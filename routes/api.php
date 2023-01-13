@@ -69,8 +69,11 @@
         // Show all Leaves Regardsless Of Status
         Route::get('leaves/all', [LeavesController::class, 'index']);
 
-        // Get All Pending Leaves
-        Route::get('leaves/pending/all', [LeavesController::class, 'pendingReq']);
+        // Get All Pending HR Leave Requests
+        Route::get('leaves/pending/hr/all', [LeavesController::class, 'list_hr_pending_req']);
+
+        // Get All Pending Manager Leave Requests
+        Route::get('leaves/pending/mg/all', [LeavesController::class, 'list_manager_pending_req']);
 
         // Get All Approved Leaves
         Route::get('leaves/approved/all', [LeavesController::class, 'approvedReq']);

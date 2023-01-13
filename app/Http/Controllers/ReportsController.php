@@ -48,7 +48,7 @@ class ReportsController extends Controller
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.gender = 'F') as 'Females',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NOT NULL) as 'ExEmployees',
                 (SELECT COUNT(*) FROM employees_leaves LEFT JOIN users as applier ON applier.id = employees_leaves.eid WHERE applier.end_date IS NULL AND ( employees_leaves.approval = 'A' AND employees_leaves.status = 'L')) as 'OnLeave',
-                (SELECT COUNT(*) FROM employees_leaves AS leaves LEFT JOIN users ON leaves.eid = users.id WHERE leaves.approval IS NULL) as 'LeavesPending',
+                (SELECT COUNT(*) FROM employees_leaves AS leaves LEFT JOIN users ON leaves.eid = users.id WHERE leaves.hApproval IS NULL AND leaves.mApproval = 'A') as 'LeavesPending',
                 (SELECT COUNT(*) FROM users WHERE users.join_date IS NOT NULL AND users.join_date between DATE_ADD(NOW(), INTERVAL -90 DAY) AND users.end_date IS NULL) as 'Probation',
                 (SELECT COUNT(*) FROM users WHERE MONTH(join_date) = MONTH(CURDATE()) AND YEAR(join_date) != YEAR(CURDATE()) AND end_date IS NULL) as 'Anniversary',
                 (SELECT COUNT(*) FROM users WHERE MONTH(birthdate) = MONTH(CURDATE()) AND end_date IS NULL) as 'Birthdays'
