@@ -42,12 +42,12 @@ class ReportsController extends Controller
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.nationality = 'BHR') as 'Natives',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.nationality <> 'BHR') as 'Expatriates',
                 (SELECT COUNT(*) FROM users WHERE users.cpr_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH) OR users.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH) OR users.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH) AND users.end_date IS NULL) as 'Expiries',
-                (SELECT COUNT(*) FROM users WHERE passport IS NULL OR passport_expire IS NULL OR cpr IS NULL OR cpr_expire IS NULL OR company IS NULL OR (visa IS NULL AND nationality <> 'BHR') OR (visa_expire IS NULL AND nationality <> 'BHR')) as 'Incompletes',
+                (SELECT COUNT(*) FROM users WHERE passport IS NULL OR passport_expire IS NULL OR cpr IS NULL OR cpr_expire IS NULL OR department IS NULL OR (visa IS NULL AND nationality <> 'BHR') OR (visa_expire IS NULL AND nationality <> 'BHR')) as 'Incompletes',
                 (SELECT COUNT(*) FROM (SELECT *, (SELECT state FROM employees_passport_transactions WHERE eid = users.id ORDER BY employees_passport_transactions.created_at DESC LIMIT 1) as state FROM users WHERE users.nationality <> 'BHR') as users WHERE users.state = 'IN') as 'Deposits',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.gender = 'M') as 'Males',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.gender = 'F') as 'Females',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NOT NULL) as 'ExEmployees',
-                (SELECT COUNT(*) FROM employees_leaves LEFT JOIN users as applier ON applier.id = employees_leaves.eid WHERE applier.end_date IS NULL AND ( employees_leaves.approval = 'A' AND employees_leaves.status = 'L')) as 'OnLeave',
+                (SELECT COUNT(*) FROM employees_leaves LEFT JOIN users as applier ON applier.id = employees_leaves.eid WHERE applier.end_date IS NULL AND ( employees_leaves.hApproval = 'A' AND employees_leaves.status = 'L')) as 'OnLeave',
                 (SELECT COUNT(*) FROM employees_leaves AS leaves LEFT JOIN users ON leaves.eid = users.id WHERE leaves.hApproval IS NULL AND leaves.mApproval = 'A') as 'LeavesPending',
                 (SELECT COUNT(*) FROM users WHERE users.join_date IS NOT NULL AND users.join_date between DATE_ADD(NOW(), INTERVAL -90 DAY) AND users.end_date IS NULL) as 'Probation',
                 (SELECT COUNT(*) FROM users WHERE MONTH(join_date) = MONTH(CURDATE()) AND YEAR(join_date) != YEAR(CURDATE()) AND end_date IS NULL) as 'Anniversary',
@@ -165,7 +165,9 @@ class ReportsController extends Controller
                     FROM 
                         users
                     LEFT JOIN
-                    	companies AS company ON company.id = users.company
+                        companies_departments AS department ON users.department = department.id
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
                     WHERE 
                         MONTH(join_date) = MONTH(CURDATE()) 
                         AND 

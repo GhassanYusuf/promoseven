@@ -26,7 +26,7 @@ class User extends Authenticatable
         'code',
         'position',
         'contact',
-        'company',
+        'department',
         'cpr',
         'cpr_expire',
         'passport',

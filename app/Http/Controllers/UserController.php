@@ -35,6 +35,7 @@ class UserController extends Controller
                             JSON_OBJECT(
                                 'id', company.id,
                                 'company', UPPER(company.name),
+                                'did', department.id,
                                 'department', UPPER(department.name),
                                 'position', UPPER(position),
                                 'accessLevel', UPPER(users.accesslevel),
@@ -113,7 +114,7 @@ class UserController extends Controller
                                 WHEN users.passport_expire IS NULL THEN 'I'
                                 WHEN users.cpr IS NULL THEN 'I'
                                 WHEN users.cpr_expire IS NULL THEN 'I'
-                                WHEN users.company IS NULL THEN 'I'
+                                WHEN department.cid IS NULL THEN 'I'
                                 WHEN users.visa IS NULL AND users.nationality <> 'BAHRAIN' THEN 'I'
                                 WHEN users.visa_expire IS NULL AND users.nationality <> 'BAHRAIN' THEN 'I'
                                 ELSE 'C'
@@ -143,6 +144,19 @@ class UserController extends Controller
 
         // Executing The Query
         $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    public function mgIndex($id) {
+
+        // Laravel Raw MySQL Methode
+        $query = $this->emp . (" WHERE department = ?");
+
+        // Executing The Query
+        $results = DB::select($query, [$id]);
 
         // Return The Results
         return $results;
@@ -397,6 +411,7 @@ class UserController extends Controller
 
   
     }
+
 
 //--------------------------------------------------------------------
 //  Search Routes By (name or cpr or passport or email)
@@ -911,7 +926,9 @@ class UserController extends Controller
                     FROM
                         users
                     LEFT JOIN
-                        companies as company on company.id = users.company
+                        companies_departments AS department ON users.department = department.id
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
                     GROUP BY
                         company.name
                     ORDER BY
@@ -988,6 +1005,32 @@ class UserController extends Controller
 
     public function destroy($id) {
         return User::destroy($id);
+    }
+
+//--------------------------------------------------------------------
+//  Get Files & Attachments
+//--------------------------------------------------------------------
+
+    public function files($cpr) {
+
+        // Laravel Raw MySQL Methode
+        $query = ("
+                    SELECT
+                        *
+                    FROM 
+                        employees_attachments AS attachments
+                    WHERE
+                        attachments.cpr = ?
+                    ORDER BY
+	                    created_at DESC
+        ");
+
+        // Executing The Query
+        $results = DB::select($query, [$cpr]);
+
+        // Return The Results
+        return $results;
+
     }
 
 }

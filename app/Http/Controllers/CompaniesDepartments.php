@@ -111,6 +111,39 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function listDepartmentLite() {
+
+        // The Query
+        $query = ("
+                    SELECT
+                        department.id,
+                        concat(company.name, ' - ', department.name) as 'department'
+                    FROM
+                        companies_departments AS department
+                    LEFT JOIN
+                        companies AS company ON department.cid = company.id
+                    ORDER BY
+                        company.name,
+                        department.name
+                        ASC
+        ");
+
+        // Result
+        $result = DB::select($query);
+
+        // Return The Result
+        return $result;
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
     public function update(Request $request, $id)
     {
         // Find The Note By Its ID
