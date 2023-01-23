@@ -13,6 +13,7 @@
     // Include Employees Controller
     use App\Http\Controllers\AnnouncementsController;
 
+    // Include Attachments Controller
     use App\Http\Controllers\AttachmentsController;
 
     // Include Employees Controller
@@ -59,7 +60,7 @@
     Route::post('/image/upload/{id}', [UserController::class, 'upload']);
 
     // Fle Upload
-    Route::post('/file/upload/{cpr}/{userName}', [AttachmentsController::class, 'fileUpload']);
+    Route::post('/file/upload/{cpr}', [AttachmentsController::class, 'fileUpload']);
 
     // Dummy Update
     Route::put('/dummyupdate/{id}', [UserController::class, 'updatePicture']);
@@ -220,6 +221,9 @@
         // Returns Employee Files By CPR
         Route::get('employees/files/{cpr}', [UserController::class, 'files']);
 
+        // Returns Employee Files By CPR
+        Route::get('employees/filesV/{title}/{cpr}', [AttachmentsController::class, 'listFileVersions']);
+
         // Delete Employee Files By CPR
         Route::delete('employees/files/delete/{id}', [AttachmentsController::class, 'deletefile']);
 
@@ -341,6 +345,9 @@
 
         // Special List For Adding Employees
         Route::get('departments/listLite', [CompaniesDepartments::class, 'listDepartmentLite']);
+
+        // Special List For Adding Employees
+        Route::get('departments/listByCompany/{id}', [CompaniesDepartments::class, 'listDepartmentByCompany']);
 
         // Fixed Function : Get Employees Under The Specific Department
         Route::get('departments/employees/{id}', [UserController::class, 'mgIndex']);

@@ -29,6 +29,37 @@ class AttachmentsController extends Controller
         return $results;
 
     }
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function listFileVersions($title, $cpr) {
+
+        // Laravel Raw MySQL Methode
+        $query = ("
+                    SELECT 
+                        * 
+                    FROM 
+                        employees_attachments as attachment
+                    WHERE
+                        attachment.title = ?
+                        AND
+                        attachment.cpr = ?
+                    ORDER BY
+                        attachment.created_at
+                        DESC
+                ");
+
+        // Executing The Query
+        $results = DB::select($query, [$title, $cpr]);
+
+        // Return The Results
+        return $results;
+
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -44,9 +75,24 @@ class AttachmentsController extends Controller
         
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
 
-    public function fileUpload(Request $request, $cpr, $userName) {
+    public function fileUpload(Request $request, $cpr) {
  
+        // Laravel Raw MySQL Methode
+        $query = ("SELECT * FROM users WHERE cpr = ?");
+        
+        // Executing The Query
+        $employee = json_decode(json_encode(DB::select($query, [$cpr])));
+
+        // Read The Unique Record
+        $employee = $employee[0];
+
         // Validate File Extension Type And File Size
         $validator = Validator::make($request->all(),[ 
             'file' => 'required|mimes:doc,docx,pdf,txt,csv,xlsx,png,jpg,jpeg,gif|max:2048',
@@ -60,39 +106,29 @@ class AttachmentsController extends Controller
         // If File Was Submitted
         if($file = $request->file('file')) {
 
-
-            /*
-                ------------------------------------------------
-                Rename The Following Variables
-                ------------------------------------------------
-                $file               -----> $submitedFile -> done
-                $name               -----> $fileOrigionalName
-                $fileName           -----> $fileNewName
-                $destinationPath    -----> $fileDirectory
-
-            */
-
-
             // Preparing The Variables
             $submittedFile      = $request->file('file');
 
             // Convert The String OF the File Name To Lower Case
             $fileOrigionalName  = strtolower($submittedFile->getClientOriginalName());
 
+            // New File Name
+            $fileNewName        = date("Ymd_his") . "_" . $fileOrigionalName;
+
             // Here We Define The Extension Of The File
             $fileExtensionName  = strtolower($submittedFile->getClientOriginalExtension());
             
             // Here We Store The File On To The Destination & Keep The File Origional Name In The Variable
-            $fileNewName        = $file->storeAs('public/dist/employees/'. $cpr . '_' . strtoupper($userName), date("Ymd_his") . "_" . $fileOrigionalName);
+            $fileUrl            = $file->storeAs('public/dist/employees/'. $cpr . '_' . strtoupper($employee->name), $fileNewName);
 
             // Here We Define The Directory Path Of The File
-            $fileDirectory      = public_path() . '\dist\\employees\\' . $cpr . '_' . strtoupper($userName);
-            
+            $fileDirectory      = public_path('dist\\employees\\') . $cpr . '_' . strtoupper($employee->name);
+
             // If The Path Was Not Existing Then Create It
             File::ensureDirectoryExists($fileDirectory);
 
             // Move the Stored File On the System To The Directory
-            $submittedFile->move($fileDirectory, $fileNewName);
+            $submittedFile->move($fileDirectory, $fileUrl);
 
             // Make Sure The File Is Not Empty
             if(!empty($files)) {
@@ -103,23 +139,24 @@ class AttachmentsController extends Controller
             }
         
             // This Is What Stores The Data In The Database
-            $save = new Attachments();
-            // The Files Belongs To An Owner
-            $save->cpr = $cpr;
-            // $save->name = $fileOrigionalName;    // Stores The Field Name
-            $save->title = $fileOrigionalName; 
-            // Stores The Field Type
-            $save->type = $fileExtensionName;
-            // $save->path = $fileDirectory;        // Stores The Field Path
-            $save->path = $fileNewName;             // Stores The Fiels Path
-            // $save->file = $fileNewName;          // Stores The Field File
+            $save               = new Attachments();    // Openning A Record
+            $save->eid          = $employee->id;        // Employee ID
+            $save->cpr          = $employee->cpr;       // Employee CPR
+            $save->title        = $fileOrigionalName;   // File Title
+            $save->type         = $fileExtensionName;   // File Type
+            $save->url          = $fileUrl;             // File URL
+
+            // File Path
+            $save->path         = $fileDirectory . '\\' . date("Ymd_his") . "_" . $fileOrigionalName;
+
+            // Save To Database
             $save->save();
 
             // Successful Response Message
             return response()->json([
                 "success"   => true,
-                "message"   => "File successfully uploaded",
-                "file"      => $submittedFile
+                "message"   => "File Successfully Uploaded",
+                "file"      => $fileNewName
             ]);
   
         }
@@ -175,21 +212,41 @@ class AttachmentsController extends Controller
      */
 
     public function deletefile($id) {
-        // Deleteing The Note By Its ID
 
+        // Deleteing The Note By Its ID
         $file = Attachments::find($id);
+        
         // $path = 'employees/';
-        $file_path = public_path()  . '\dist\\employees\\' . $cpr . '_' . strtoupper($userName);
+        $file_path = $file->path;
+
+        // This is a test
+        // return $file_path;
+
+        if(File::disk('public')->exists($file_path)) {
+
+            return "exist";
+
+        } else {
+
+            return "not found";
+
+        }
+        
         if ($file->attachments_file != null && File::disk('public')->exists($file_path)){
             File::disk('public/dist/employees/')->delete($file_path);
             return response();
         }
+        
         $query = $file->delete();
+        
         if ($query) {
             return response()->json(['code'=>1, 'msg'=>'File has been deleted successfully']);
         } else {
             return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
         }
+
         // return attachments::destroy($id);
+
     }
+
 }

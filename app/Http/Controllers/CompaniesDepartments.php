@@ -14,8 +14,8 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function index()
-    {
+    public function index() {
+
         // Query
         $query = ("
                     SELECT 
@@ -45,6 +45,7 @@ class CompaniesDepartments extends Controller
 
         // Return The Result
         return $result;
+
     }
 
     /**
@@ -54,13 +55,14 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
+
         // Query
         $result = companies_departments::create($request->all());
 
         // Return The Result
         return $result;
+
     }
 
     /**
@@ -70,8 +72,8 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function show($id)
-    {
+    public function show($id) {
+
         // Query
         $query = ("
                     SELECT 
@@ -101,6 +103,42 @@ class CompaniesDepartments extends Controller
 
         // Return The Result
         return $result;
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function listDepartmentByCompany($cid) {
+
+        $query = ("
+                    SELECT
+                        department.id as 'id',
+                        company.id as 'cid',
+                        UPPER(if(department.mid IS NULL, 'NONE', department.mid)) as 'mid',
+                        UPPER(department.name) as 'department',
+                        UPPER(company.name) as 'company',
+                        UPPER(if(manager.name IS NULL, 'NONE', manager.name)) as 'manager'
+                    FROM
+                        companies_departments AS department
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
+                    LEFT JOIN
+                        users AS manager ON manager.id = department.mid
+                    WHERE
+                        company.id = ?
+                ");
+
+        // Result
+        $result = DB::select($query, [$cid]);
+
+        // Return The Result
+        return $result;
+
     }
 
     /**
@@ -144,8 +182,8 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
+
         // Find The Note By Its ID
         $results = companies_departments::find($id);
         
@@ -154,6 +192,7 @@ class CompaniesDepartments extends Controller
 
         // Return The Values For Display
         return $results;
+
     }
 
     /**
@@ -163,9 +202,11 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function destroy($id)
-    {
+    public function destroy($id) {
+
         // Deleteing The Note By Its ID
         return companies_departments::destroy($id);
+
     }
+    
 }

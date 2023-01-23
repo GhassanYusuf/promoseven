@@ -412,7 +412,6 @@ class UserController extends Controller
   
     }
 
-
 //--------------------------------------------------------------------
 //  Search Routes By (name or cpr or passport or email)
 //--------------------------------------------------------------------
