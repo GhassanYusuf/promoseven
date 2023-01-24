@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\attachments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -373,13 +375,72 @@ class UserController extends Controller
 
     }
 
-    public function upload(Request $request, $id){
+//--------------------------------------------------------------------
+//  For Files Of the User
+//--------------------------------------------------------------------
+
+    // Get All The Files Of This User
+    public function attachmentAll($cpr) {
+        
+        // Laravel Raw MySQL Methode
+        $query = ("SELECT * FROM employees_attachments WHERE cpr = ? ORDER BY title, created_at DESC;");
+
+        // Executing The Query
+        $results = DB::select($query, [$cpr]);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Get File Version Of The Same File
+    public function attachmentVersions($title, $cpr) {
+
+        // Laravel Raw MySQL Methode
+        $query = ("
+                    SELECT 
+                        * 
+                    FROM 
+                        employees_attachments as attachment
+                    WHERE
+                        attachment.title = ?
+                        AND
+                        attachment.cpr = ?
+                    ORDER BY
+                        attachment.created_at
+                        DESC
+                ");
+
+        // Executing The Query
+        $results = DB::select($query, [$title, $cpr]);
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Uploads A Picture
+    public function pictureUpload(Request $request, $cpr){
  
+        // Laravel Raw MySQL Methode
+        $query = ("SELECT * FROM users WHERE cpr = ?");
+        
+        // Executing The Query
+        $employee = json_decode(json_encode(DB::select($query, [$cpr])));
+
+        // Read The Unique Record
+        $employee = $employee[0];
+
+        // To Make Sure The Person Have A CPR
+        if(is_null($employee->cpr) || empty($employee->cpr)) {
+            return response()->json(['error'=>'employee cpr number is missing, please updare the user profile with same cpr number'], 401);
+        }
+
+        // Validate The File Type
         $validator = Validator::make($request->all(),[ 
             // 'file' => 'required|mimes:doc,docx,pdf,txt,csv|max:2048',
             'picture'  => 'required|mimes:png,jpg,jpeg,gif',
-        ]);     
-
+        ]);
  
         if($validator->fails()) {          
             return response()->json(['error'=>$validator->errors()], 401);                        
@@ -387,29 +448,155 @@ class UserController extends Controller
  
         if ($picture = $request->file('picture')) {
 
+            // The Directory Name
+            $EmployeeDirectory  = strtoupper($employee->cpr . '_' . $employee->name);
+
             // Preparing Variables
             $picture            = $request->file('picture');
-            $name               = $picture->getClientOriginalName();
-            $fileName           = $picture->storeAs('public/dist/img', $name);
-            $destinationPath    = public_path().'/dist/img';
+            $pictureExtension   = strtolower($picture->getClientOriginalExtension());
+
+            // $name               = $picture->getClientOriginalName();
+            $name               = 'profile.' . $pictureExtension;
+
+            $fileName           = $picture->storeAs('public/dist/employees/'. $EmployeeDirectory, $name);
+            $destinationPath    = public_path('dist\\employees\\' . $EmployeeDirectory);
             $picture->move($destinationPath, $fileName);
 
             // Laravel Raw MySQL Methode
-            $query = "UPDATE users SET users.picture = ? WHERE id = ?";
+            $query = "UPDATE users SET users.picture = ? WHERE cpr = ?";
 
             // Executing The Query
-            $results = DB::update($query, [$fileName, $id]);
+            $results = DB::update($query, [$fileName, $employee->cpr]);
 
             // Return A Response
             return response()->json([
                 "success" => true,
                 "message" => "File successfully uploaded",
-                "picture" => $picture
+                "picture" => $results
             ]);
   
         }
 
   
+    }
+
+    // Uploads A File
+    public function attachmentUpload(Request $request, $cpr) {
+ 
+        // Laravel Raw MySQL Methode
+        $query = ("SELECT * FROM users WHERE cpr = ?");
+        
+        // Executing The Query
+        $employee = json_decode(json_encode(DB::select($query, [$cpr])));
+
+        // Read The Unique Record
+        $employee = $employee[0];
+
+        // To Make Sure The Person Have A CPR
+        if(is_null($employee->cpr) || empty($employee->cpr)) {
+            return response()->json(['error'=>'employee cpr number is missing, please updare the user profile with same cpr number'], 401);
+        }
+
+        // Validate File Extension Type And File Size
+        $validator = Validator::make($request->all(),[ 
+            'file' => 'required|mimes:doc,docx,pdf,txt,csv,xlsx,png,jpg,jpeg,gif|max:2048',
+        ]);
+
+        // In Case the Validation Was Not Sucessfull Send Error Response
+        if($validator->fails()) {          
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+   
+        // If File Was Submitted
+        if($file = $request->file('file')) {
+
+            // Preparing The Variables
+            $submittedFile      = $request->file('file');
+
+            // Convert The String OF the File Name To Lower Case
+            $fileOrigionalName  = strtolower($submittedFile->getClientOriginalName());
+
+            // New File Name
+            $fileNewName        = date("Ymd_his") . "_" . $fileOrigionalName;
+
+            // The Directory Name
+            $EmployeeDirectory  = strtoupper($employee->cpr . '_' . $employee->name);
+
+            // Here We Define The Extension Of The File
+            $fileExtensionName  = strtolower($submittedFile->getClientOriginalExtension());
+            
+            // Here We Store The File On To The Destination & Keep The File Origional Name In The Variable
+            $fileUrl            = $file->storeAs('public/dist/employees/'. $EmployeeDirectory . '/Attachments', $fileNewName);
+
+            // Here We Define The Directory Path Of The File
+            $fileDirectory      = public_path('dist\\employees\\'. $EmployeeDirectory . '\\Attachments');
+
+            // If The Path Was Not Existing Then Create It
+            File::ensureDirectoryExists($fileDirectory);
+
+            // Move the Stored File On the System To The Directory
+            $submittedFile->move($fileDirectory, $fileUrl);
+
+            // Make Sure The File Is Not Empty
+            if(!empty($files)) {
+                foreach($files as $file) {
+                    // File::disk(['drivers' => 'local', 'root' => $destinationPath])->put($file->getClientOriginalName());
+                    File::disk(['drivers' => 'local', 'root' => $fileDirectory])->put($fileOrigionalName);
+                }
+            }
+        
+            // This Is What Stores The Data In The Database
+            $save               = new Attachments();    // Openning A Record
+            $save->eid          = $employee->id;        // Employee ID
+            $save->cpr          = $employee->cpr;       // Employee CPR
+            $save->title        = $fileOrigionalName;   // File Title
+            $save->type         = $fileExtensionName;   // File Type
+            $save->url          = $fileUrl;             // File URL
+
+            // File Path
+            $save->path         = $fileDirectory . '\\' . date("Ymd_his") . "_" . $fileOrigionalName;
+
+            // Save To Database
+            $save->save();
+
+            // Successful Response Message
+            return response()->json([
+                "success"   => true,
+                "message"   => "File Successfully Uploaded",
+                "file"      => $fileNewName
+            ]);
+  
+        }
+  
+    }
+
+    // Delete Aattachment
+    public function attachmentDelete($id) {
+
+        // Deleteing The Note By Its ID
+        $file = Attachments::find($id);
+        
+        // The Place Where The File Is
+        $file_path = $file->path;
+
+        // This is a test
+        return $file_path;
+        
+        if ($file->attachments_file != null && File::disk('public')->exists($file_path)){
+            File::disk('public/dist/employees/')->delete($file_path);
+            return response();
+        }
+        
+        $query = $file->delete();
+        
+        if ($query) {
+            return response()->json(['code'=>1, 'msg'=>'File has been deleted successfully']);
+        } else {
+            return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
+        }
+
+        // return attachments::destroy($id);
+
     }
 
 //--------------------------------------------------------------------

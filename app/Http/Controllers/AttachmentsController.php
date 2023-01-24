@@ -211,42 +211,6 @@ class AttachmentsController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function deletefile($id) {
 
-        // Deleteing The Note By Its ID
-        $file = Attachments::find($id);
-        
-        // $path = 'employees/';
-        $file_path = $file->path;
-
-        // This is a test
-        // return $file_path;
-
-        if(File::disk('public')->exists($file_path)) {
-
-            return "exist";
-
-        } else {
-
-            return "not found";
-
-        }
-        
-        if ($file->attachments_file != null && File::disk('public')->exists($file_path)){
-            File::disk('public/dist/employees/')->delete($file_path);
-            return response();
-        }
-        
-        $query = $file->delete();
-        
-        if ($query) {
-            return response()->json(['code'=>1, 'msg'=>'File has been deleted successfully']);
-        } else {
-            return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
-        }
-
-        // return attachments::destroy($id);
-
-    }
 
 }

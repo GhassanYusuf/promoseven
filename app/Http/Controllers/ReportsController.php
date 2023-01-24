@@ -77,12 +77,12 @@ class ReportsController extends Controller
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.nationality = 'BHR') as 'Natives',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.nationality <> 'BHR') as 'Expatriates',
                 (SELECT COUNT(*) FROM users WHERE users.cpr_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH) OR users.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH) OR users.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH) AND users.end_date IS NULL) as 'Expiries',
-                (SELECT COUNT(*) FROM users WHERE passport IS NULL OR passport_expire IS NULL OR cpr IS NULL OR cpr_expire IS NULL OR company IS NULL OR (visa IS NULL AND nationality <> 'BHR') OR (visa_expire IS NULL AND nationality <> 'BHR')) as 'Incompletes',
+                (SELECT COUNT(*) FROM users LEFT JOIN companies_departments as department ON department.id = users.department LEFT JOIN companies AS company ON company.id = department.cid WHERE users.passport IS NULL OR users.passport_expire IS NULL OR users.cpr IS NULL OR users.cpr_expire IS NULL OR users.department IS NULL OR (users.visa IS NULL AND users.nationality <> 'BHR') OR (users.visa_expire IS NULL AND users.nationality <> 'BHR')) as 'Incompletes',
                 (SELECT COUNT(*) FROM (SELECT *, (SELECT state FROM employees_passport_transactions WHERE eid = users.id ORDER BY employees_passport_transactions.created_at DESC LIMIT 1) as state FROM users WHERE users.nationality <> 'BHR') as users WHERE users.state = 'IN') as 'Deposits',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.gender = 'M') as 'Males',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NULL AND users.gender = 'F') as 'Females',
                 (SELECT COUNT(*) FROM users WHERE users.end_date IS NOT NULL) as 'ExEmployees',
-                (SELECT COUNT(*) FROM employees_leaves LEFT JOIN users as applier ON applier.id = employees_leaves.eid WHERE applier.end_date IS NULL AND ( employees_leaves.approval = 'A' AND employees_leaves.status = 'L')) as 'OnLeave',
+                (SELECT COUNT(*) FROM employees_leaves LEFT JOIN users as applier ON applier.id = employees_leaves.eid WHERE applier.end_date IS NULL AND ( employees_leaves.hApproval = 'A' AND employees_leaves.status = 'L')) as 'OnLeave',
                 (SELECT COUNT(*) FROM users WHERE users.join_date IS NOT NULL AND users.join_date between DATE_ADD(NOW(), INTERVAL -90 DAY) AND users.end_date IS NULL) as 'Probation',
                 (SELECT COUNT(*) FROM users WHERE MONTH(join_date) = MONTH(CURDATE()) AND YEAR(join_date) != YEAR(CURDATE()) AND end_date IS NULL) as 'Anniversary',
                 (SELECT COUNT(*) FROM users WHERE MONTH(birthdate) = MONTH(CURDATE()) AND end_date IS NULL) as 'Birthdays'
@@ -107,27 +107,30 @@ class ReportsController extends Controller
         // Lite Query That Gets Only The Numbers Requires
         $query = ("
                     SELECT 
-                        applier.id as 'id',
-                        applier.cpr as 'cpr',
-                        applier.picture as 'picture',
-                        applier.name as 'name',
-                        applier.gender as 'gender',
-                        UPPER(applier.position) as 'position',
+                        employee.id as 'id',
+                        employee.cpr as 'cpr',
+                        employee.picture as 'picture',
+                        employee.name as 'name',
+                        employee.gender as 'gender',
+                        UPPER(employee.position) as 'position',
                         company.name as 'company',
+                        department.name as 'department',
                         employees_leaves.return_date as 'return',
                         JSON_OBJECT(
-                            'y', if(applier.end_date IS NULL, UPPER(CONCAT(timestampdiff(year, applier.join_date, now()))), UPPER(CONCAT( timestampdiff(year, applier.join_date, applier.end_date)))),
-                            'm', if(applier.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, applier.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, applier.join_date, applier.end_date) % 12))),
-                            'd', if(applier.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, applier.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, applier.join_date, applier.end_date) % 30.4375))))
+                            'y', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff(year, employee.join_date, now()))), UPPER(CONCAT( timestampdiff(year, employee.join_date, employee.end_date)))),
+                            'm', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, employee.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, employee.join_date, employee.end_date) % 12))),
+                            'd', if(employee.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, employee.end_date) % 30.4375))))
                         ) as 'experiance'
                     FROM 
                         employees_leaves 
                     LEFT JOIN 
-                        users as applier ON applier.id = employees_leaves.eid 
+                        users as employee ON employee.id = employees_leaves.eid
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = employee.department
                     LEFT JOIN 
-                        companies as company ON applier.company = company.id
+                        companies as company ON department.cid = company.id
                     WHERE 
-                        applier.end_date IS NULL AND ( employees_leaves.approval = 'A' AND employees_leaves.status = 'L');
+                        employee.end_date IS NULL AND ( employees_leaves.hApproval = 'A' AND employees_leaves.status = 'L');
         ");
 
         // Executing The Query
@@ -157,6 +160,7 @@ class ReportsController extends Controller
                         users.gender as 'gender',
                         users.join_date as 'join',
                         company.name as 'company',
+                        department.name as 'department',
                         JSON_OBJECT(
                             'y', if(users.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, users.join_date, now()))), UPPER(CONCAT( timestampdiff(year, users.join_date, users.end_date)))),
                             'm', if(users.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, users.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, users.join_date, users.end_date) % 12))),
@@ -195,30 +199,33 @@ class ReportsController extends Controller
         // Lite Query That Gets Only The Numbers Requires
         $query = ("
                     SELECT 
-                        users.id as 'id',
-                        users.cpr as 'cpr',
-                        users.picture as 'picture',
-                        users.name as 'name',
-                        users.gender as 'gender',
-                        users.join_date as 'join',
-                        UPPER(users.position) as 'position',
+                        employee.id as 'id',
+                        employee.cpr as 'cpr',
+                        employee.picture as 'picture',
+                        employee.name as 'name',
+                        employee.gender as 'gender',
+                        employee.join_date as 'join',
+                        UPPER(employee.position) as 'position',
                         company.name as 'company',
+                        department.name as 'department',
                         JSON_OBJECT(
-                            'y', if(users.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, users.join_date, now()))), UPPER(CONCAT( timestampdiff(year, users.join_date, users.end_date)))),
-                            'm', if(users.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, users.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, users.join_date, users.end_date) % 12))),
-                            'd', if(users.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, users.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, users.join_date, users.end_date) % 30.4375))))
+                            'y', if(employee.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, employee.join_date, now()))), UPPER(CONCAT( timestampdiff(year, employee.join_date, employee.end_date)))),
+                            'm', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, employee.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, employee.join_date, employee.end_date) % 12))),
+                            'd', if(employee.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, employee.end_date) % 30.4375))))
                         ) as 'experiance'
                     FROM 
-                        users
+                        users AS employee
                     LEFT JOIN
-                    	companies AS company ON company.id = users.company
+                        companies_departments AS department ON department.id = employee.department
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
                     WHERE 
-                        users.join_date IS NOT NULL 
+                        employee.join_date IS NOT NULL 
                         AND 
-                        users.join_date between DATE_ADD(NOW(), INTERVAL -90 DAY) 
+                        employee.join_date between DATE_ADD(NOW(), INTERVAL -90 DAY) 
                         AND 
-                        users.end_date IS NULL
-        ");
+                        employee.end_date IS NULL
+                ");
 
         // Executing The Query
         $result = DB::select($query);
@@ -239,24 +246,27 @@ class ReportsController extends Controller
         // Lite Query That Gets Only The Numbers Requires
         $query = ("
                     SELECT 
-                        users.id as 'id',
-                        users.cpr as 'cpr',
-                        users.picture as 'picture',
-                        users.name as 'name',
-                        users.gender as 'gender',
-                        ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(users.birthdate, '%Y-%m-%d'))/365, 0) AS 'age',
-                        users.birthdate as 'birthday',
-                        UPPER(users.position) as 'position',
+                        employee.id as 'id',
+                        employee.cpr as 'cpr',
+                        employee.picture as 'picture',
+                        employee.name as 'name',
+                        employee.gender as 'gender',
+                        ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(employee.birthdate, '%Y-%m-%d'))/365, 0) AS 'age',
+                        employee.birthdate as 'birthday',
+                        UPPER(employee.position) as 'position',
                         company.name as 'company',
+                        department.name as 'department',
                         JSON_OBJECT(
-                            'y', if(users.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, users.join_date, now()))), UPPER(CONCAT( timestampdiff(year, users.join_date, users.end_date)))),
-                            'm', if(users.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, users.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, users.join_date, users.end_date) % 12))),
-                            'd', if(users.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, users.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, users.join_date, users.end_date) % 30.4375))))
+                            'y', if(employee.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, employee.join_date, now()))), UPPER(CONCAT( timestampdiff(year, employee.join_date, employee.end_date)))),
+                            'm', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, employee.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, employee.join_date, employee.end_date) % 12))),
+                            'd', if(employee.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, employee.end_date) % 30.4375))))
                         ) as 'experiance'
                     FROM 
-                        users
+                        users AS employee
                     LEFT JOIN
-                    	companies AS company ON company.id = users.company
+                        companies_departments AS department ON department.id = employee.department
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
                     WHERE 
                         MONTH(birthdate) = MONTH(CURDATE()) 
                         AND 
@@ -286,16 +296,18 @@ class ReportsController extends Controller
                         count(*) as 'count',
                         ROUND((count(*)/(select count(*) from users)) * 100, 1) as 'percentage'
                     FROM
-                        users
+                        users AS employee
                     LEFT JOIN
-                        companies as company on company.id = users.company
+                        companies_departments AS department ON department.id = employee.department
+                    LEFT JOIN
+                        companies AS company ON department.cid = company.id
                     WHERE
-                        users.end_date is NULL
+                        employee.end_date IS NULL
                     GROUP BY
-                        company.name
+                        employee.name
                     ORDER BY
                         count(*) DESC
-        ");
+                ");
 
         // Executing The Query
         $result = DB::select($query);

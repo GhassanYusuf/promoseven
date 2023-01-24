@@ -56,21 +56,15 @@
     // Sanctum Register
     Route::post('/register', [AuthController::class, 'register']);
 
-    // Image Upload
-    Route::post('/image/upload/{id}', [UserController::class, 'upload']);
-
-    // Fle Upload
-    Route::post('/file/upload/{cpr}', [AttachmentsController::class, 'fileUpload']);
-
     // Dummy Update
     Route::put('/dummyupdate/{id}', [UserController::class, 'updatePicture']);
 
     // Protected Routes
     Route::group(['middleware'=> ['auth:sanctum']], function () {
 
-//=========================================================================
-//  Protected Routes
-//=========================================================================
+    //=========================================================================
+    //  Protected Routes
+    //=========================================================================
 
         // Show all Leaves Regardsless Of Status
         Route::get('leaves/all', [LeavesController::class, 'index']);
@@ -218,14 +212,20 @@
         // Returns Employee By ID
         Route::get('employees/id/{id}', [UserController::class, 'show']);
 
-        // Returns Employee Files By CPR
-        Route::get('employees/files/{cpr}', [UserController::class, 'files']);
+        // Profile Picture Upload
+        Route::post('employees/picture/upload/{cpr}', [UserController::class, 'pictureUpload']);
 
         // Returns Employee Files By CPR
-        Route::get('employees/filesV/{title}/{cpr}', [AttachmentsController::class, 'listFileVersions']);
+        Route::get('employees/files/{cpr}', [UserController::class, 'attachmentAll']);
+
+        // Returns Employee Files By CPR
+        Route::get('employees/files/version/{title}/{cpr}', [UserController::class, 'attachmentVersions']);
+
+        // Attachment Files Upload
+        Route::post('employees/files/upload/{cpr}', [UserController::class, 'attachmentUpload']);
 
         // Delete Employee Files By CPR
-        Route::delete('employees/files/delete/{id}', [AttachmentsController::class, 'deletefile']);
+        Route::delete('employees/files/delete/{id}', [UserController::class, 'attachmentDelete']);
 
         // Returns All Employees By Name Referance
         Route::get('employees/name/{name}', [UserController::class, 'search_name']);
@@ -330,6 +330,12 @@
         // Fixed Function : Add Notes To Employees
         Route::post('companies/add', [CompaniesController::class, 'store']);
 
+        // Profile Picture Upload
+        Route::post('companies/logo/upload/{id}', [CompaniesController::class, 'logoUpload']);
+
+        // Profile Picture Upload
+        Route::post('companies/cr/upload/{id}', [CompaniesController::class, 'crUpload']);
+
         // Fixed Function : Delete A Note By Its ID
         Route::delete('companies/delete/{id}', [CompaniesController::class, 'destroy'])->name('delete.note');
 
@@ -351,6 +357,9 @@
 
         // Fixed Function : Get Employees Under The Specific Department
         Route::get('departments/employees/{id}', [UserController::class, 'mgIndex']);
+
+        // Fixed Function : Batch Move Empolyees To Other Department
+        Route::get('departments/employees/move/{old}/{new}', [CompaniesDepartments::class, 'batchMoveToNewDepartment']);
 
         // Fixed Function : Get A Note By Its ID
         Route::get('departments/id/{id}', [CompaniesDepartments::class, 'show']);
@@ -374,9 +383,9 @@
         // Fixed Function : Get A Note By Its ID
         Route::get('countries/id/{id}', [CountriesController::class, 'show']);
 
-//=========================================================================
-//  End Of Protected Routes
-//=========================================================================
+    //=========================================================================
+    //  End Of Protected Routes
+    //=========================================================================
 
         // Employee Logout
         Route::post('/logout', [AuthController::class, 'logout']);  

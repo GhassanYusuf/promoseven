@@ -182,6 +182,27 @@ class CompaniesDepartments extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    public function batchMoveToNewDepartment($old, $new) {
+
+        // Bact Move Employees To New Department
+        $query = ("UPDATE users AS employee SET employee.department = ? WHERE employee.department = ?;");
+
+        // Result
+        $result = DB::update($query, [$new, $old]);
+
+        // Return The Result
+        return $result;
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
     public function update(Request $request, $id) {
 
         // Find The Note By Its ID
