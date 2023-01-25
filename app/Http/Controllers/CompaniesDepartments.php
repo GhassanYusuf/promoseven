@@ -27,7 +27,8 @@ class CompaniesDepartments extends Controller
                         if(parent.name IS NULL, 'NONE', parent.name) as 'parent',
                         UPPER(company.name) as 'company',
                         UPPER(companies_departments.name) as 'department',
-                        UPPER(if(companies_departments.mid IS NULL, 'NONE', users.name)) as 'manager'
+                        UPPER(if(companies_departments.mid IS NULL, 'NONE', users.name)) as 'manager',
+                        if(manager.picture IS NULL, 'NONE', manager.picture) as 'picture'
                     FROM 
                         companies_departments 
                     LEFT JOIN
@@ -85,7 +86,8 @@ class CompaniesDepartments extends Controller
                         if(parent.name IS NULL, 'NONE', parent.name) as 'parent',
                         UPPER(company.name) as 'company',
                         UPPER(companies_departments.name) as 'department',
-                        UPPER(if(companies_departments.mid IS NULL, 'NONE', users.name)) as 'manager'
+                        UPPER(if(companies_departments.mid IS NULL, 'NONE', users.name)) as 'manager',
+                        if(manager.picture IS NULL, 'NONE', manager.picture) as 'picture'
                     FROM 
                         companies_departments 
                     LEFT JOIN
