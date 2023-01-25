@@ -11,6 +11,7 @@ class Attachments extends Model
     protected $table = 'employees_attachments';
     protected $fillable = [
         'title',
+        'name',
         'type',
         'path',
         'eid',

@@ -549,7 +549,8 @@ class UserController extends Controller
             $save               = new Attachments();    // Openning A Record
             $save->eid          = $employee->id;        // Employee ID
             $save->cpr          = $employee->cpr;       // Employee CPR
-            $save->title        = $fileOrigionalName;   // File Title
+            $save->title        = $request->title;      // File Title
+            $save->name         = $fileOrigionalName;   // File Title
             $save->type         = $fileExtensionName;   // File Type
             $save->url          = $fileUrl;             // File URL
 

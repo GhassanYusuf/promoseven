@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->string('name', 45);
-            $table->string('logo', 45);
-            $table->string('cr', 45);
-            $table->string('cr_attach', 100);
-            $table->date('cr_expire');
-            $table->string('vat_number', 100);
-            $table->string('parent_company', 45);
+            $table->string('logo', 100)->nullable();
+            $table->string('cr', 45)->unique()->nullable();
+            $table->string('cr_attach', 100)->nullable();
+            $table->date('cr_expire')->nullable();
+            $table->string('vat_number', 100)->nullable();
+            $table->string('parent_company', 45)->nullable();
             $table->timestamps();
         });
     }

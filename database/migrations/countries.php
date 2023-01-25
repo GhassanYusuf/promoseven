@@ -15,11 +15,12 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 45);
+            $table->string('name', 80);
             $table->string('iso', 2)->unique()->nullable();
             $table->string('iso3', 3)->unique()->nullable();
-            $table->string('numcode', 10)->nullable();
-            $table->string('phonecode', 10)->nullable();
+            $table->integer('numcode', 6)->nullable();
+            $table->integer('phonecode', 6)->nullable();
+            $table->string('currency', 6)->nullable();
             $table->timestamps();
         });
     }

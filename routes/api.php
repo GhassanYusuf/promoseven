@@ -13,9 +13,6 @@
     // Include Employees Controller
     use App\Http\Controllers\AnnouncementsController;
 
-    // Include Attachments Controller
-    use App\Http\Controllers\AttachmentsController;
-
     // Include Employees Controller
     use App\Http\Controllers\LeavesController;
 

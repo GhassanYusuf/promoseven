@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('companies_departments', function (Blueprint $table) {
             $table->id();
             $table->integer('cid');                 // Companies ID
-            $table->integer('pdid')->nullable();    // Parent Department ID
             $table->integer('mid')->nullable();     // Department Manager ID
+            $table->integer('pdid')->nullable();    // Parent Department ID
             $table->string('name');                 // Title Of the Department
             $table->timestamps();
         });

@@ -180,10 +180,19 @@ class CompaniesController extends Controller {
             }
         
             // Laravel Raw MySQL Methode
-            $query = "UPDATE companies SET companies.cr_attach = ? WHERE id = ?";
+            $query = ("
+                        UPDATE 
+                            companies 
+                        SET 
+                            cr_fileName = ?,
+                            cr_fileType = ?,
+                            cr_fileUrl = ?
+                        WHERE 
+                            id = ?
+                    ");
 
             // Executing The Query
-            $results = DB::update($query, [$fileUrl, $company->id]);
+            $results = DB::update($query, [$fileNewName, $file->getClientOriginalExtension(), $fileUrl, $company->id]);
 
             // Successful Response Message
             return response()->json([

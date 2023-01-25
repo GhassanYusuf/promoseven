@@ -12,8 +12,10 @@ class companies extends Model
     protected $fillable = [
         'name',
         'logo',
-        'cr',
-        'cr_attach',
+        'cr_number',
+        'cr_fileName',
+        'cr_fileType',
+        'cr_fileUrl ',
         'cr_expire',
         'vat_number',
         'parent_company'
