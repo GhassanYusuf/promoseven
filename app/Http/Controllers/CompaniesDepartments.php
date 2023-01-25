@@ -27,7 +27,7 @@ class CompaniesDepartments extends Controller
                         if(parent.name IS NULL, 'NONE', parent.name) as 'parent',
                         UPPER(company.name) as 'company',
                         UPPER(companies_departments.name) as 'department',
-                        UPPER(if(companies_departments.mid IS NULL, 'NONE', users.name)) as 'manager',
+                        UPPER(if(companies_departments.mid IS NULL, 'NONE', manager.name)) as 'manager',
                         if(manager.picture IS NULL, 'NONE', manager.picture) as 'picture'
                     FROM 
                         companies_departments 
@@ -36,7 +36,7 @@ class CompaniesDepartments extends Controller
                     LEFT JOIN
                         companies as parent on parent.id = companies_departments.pdid
                     LEFT JOIN
-                        users on users.id = companies_departments.mid
+                        users as manager on manager.id = companies_departments.mid
                     ORDER BY
                         company.name, companies_departments.name ASC;
                 ");
