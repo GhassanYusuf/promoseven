@@ -239,9 +239,6 @@
         // Returns All Employees By Visa Referance
         Route::get('employees/visa/{visa}', [UserController::class, 'search_visa']);
 
-        // Image Upload
-        // Route::post('employees/upload', [UserController::class, 'dummyUpdate']);
-
     //-------------------------------------------------------------------------
     //  Statistics Routes
     //-------------------------------------------------------------------------

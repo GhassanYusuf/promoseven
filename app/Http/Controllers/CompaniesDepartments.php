@@ -122,7 +122,8 @@ class CompaniesDepartments extends Controller
                         UPPER(if(department.mid IS NULL, 'NONE', department.mid)) as 'mid',
                         UPPER(department.name) as 'department',
                         UPPER(company.name) as 'company',
-                        UPPER(if(manager.name IS NULL, 'NONE', manager.name)) as 'manager'
+                        UPPER(if(manager.name IS NULL, 'NONE', manager.name)) as 'manager',
+                        if(manager.picture IS NULL, 'NONE', manager.picture) as 'picture'
                     FROM
                         companies_departments AS department
                     LEFT JOIN
