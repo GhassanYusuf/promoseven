@@ -42,6 +42,39 @@ class UppraisalController extends Controller
 
                     ");
 
+    private $uppraisal2 = ("
+                            SELECT 
+                                uppraisal.id AS 'id',
+                                employee.id AS 'eid',
+                                company.id AS 'cid',
+                                uppraisal.did AS 'did',
+                                visa.id AS 'vid',
+                                enroller.id AS 'enrid',
+                                UPPER(employee.name) AS 'name',
+                                UPPER(company.name) AS 'company',
+                                UPPER(department.name) AS 'department',
+                                UPPER(uppraisal.position) AS 'position',
+                                UPPER(if(employee.nationality = 'BHR', 'NONE', visa.name)) AS 'visa',
+                                UPPER(uppraisal.effective) AS 'effective',
+                                UPPER(ROUND(uppraisal.salary, 0)) AS 'salary',
+                                UPPER(ROUND((uppraisal.salary - LAG(uppraisal.salary, 1) OVER (ORDER BY uppraisal.effective ASC)), 0)) AS 'increment',
+                                UPPER(TIMESTAMPDIFF(MONTH, uppraisal.effective, LEAD(uppraisal.effective, 1) OVER (ORDER BY uppraisal.effective ASC))) as 'months',
+                                UPPER(ROUND(TIMESTAMPDIFF(MONTH, uppraisal.effective, LEAD(uppraisal.effective, 1) OVER (ORDER BY uppraisal.effective ASC)) * uppraisal.salary, 0)) AS 'earning',
+                                UPPER(enroller.name) AS 'enroller'
+                            FROM 
+                                users AS employee
+                            LEFT JOIN
+                                employees_uppraisals AS uppraisal ON uppraisal.eid = employee.id
+                            LEFT JOIN
+                                companies_departments AS department ON department.id = uppraisal.did
+                            LEFT JOIN
+                                companies AS company ON company.id = department.cid
+                            LEFT JOIN
+                                employees_visas AS visa ON visa.id = uppraisal.vid
+                            LEFT JOIN
+                                users AS enroller ON enroller.id = uppraisal.doneBy
+                        ");
+
     /**
      * Display a listing of the resource.
      *
@@ -114,11 +147,11 @@ class UppraisalController extends Controller
     public function show($eid) {
 
         // Modifying the Query
-        $query = $this->uppraisal . ("
+        $query = $this->uppraisal2 . ("
                                 WHERE
                                     employee.id = ?
                                 ORDER BY
-                                    position.created_at DESC
+                                    uppraisal.created_at DESC
                             ");
 
         // Executing The Query
@@ -150,6 +183,57 @@ class UppraisalController extends Controller
 
     }
 
+    public function migrate() {
+
+        $query = ("
+                    INSERT INTO
+                        employees_uppraisals
+                        (
+                            eid, 
+                            did, 
+                            vid, 
+                            position, 
+                            effective,
+                            doneBy,
+                            created_at,
+                            updated_at
+                        )
+                    SELECT 
+                        employee.id AS 'eid',
+                        department.id AS 'did',
+                        visa.id AS 'vid',
+                        employee.position as 'position',
+                        employee.join_date as 'effective',
+                        171,
+                        now(),
+                        now()
+                        -- company.id AS 'cid',
+                        -- UPPER(company.name) AS 'company',
+                        -- UPPER(department.name) AS 'department',
+                        -- visa.name AS 'visa',
+                        -- employee.join_date as 'effective'
+                    FROM 
+                        users AS employee
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = employee.department
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
+                    LEFT JOIN
+                        employees_visas AS visa ON visa.id = employee.visa
+                    ORDER BY
+                        company.name,
+                        department.name
+                        ASC
+                ");
+
+        // Executing The Query
+        $result = DB::insert($query);
+
+        // Return The Result
+        return $result;
+
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -163,4 +247,5 @@ class UppraisalController extends Controller
         return employees_uppraisal::destroy($id);
 
     }
+
 }
