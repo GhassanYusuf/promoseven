@@ -6,15 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     /**
      * Run the migrations.
      *
      * @return void
      */
-
-    public function up() {
-
+    public function up()
+    {
         Schema::create('companies_departments', function (Blueprint $table) {
             $table->id();
             $table->integer('cid');                 // Companies ID
@@ -23,7 +21,6 @@ return new class extends Migration
             $table->string('name');                 // Title Of the Department
             $table->timestamps();
         });
-
     }
 
     /**
@@ -31,11 +28,8 @@ return new class extends Migration
      *
      * @return void
      */
-
-    public function down() {
-        
+    public function down()
+    {
         Schema::dropIfExists('companies_departments');
-
     }
-
 };
