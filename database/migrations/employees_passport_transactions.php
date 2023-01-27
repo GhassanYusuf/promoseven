@@ -17,8 +17,8 @@ return new class extends Migration
         Schema::create('employees_passport_transactions', function (Blueprint $table) {
             $table->id();
             $table->integer('eid');
-            $table->enum('state', ['IN', 'OUT']);
-            $table->string('note', 50)->nullable();
+            $table->enum('state', ['IN', 'OUT'])->nullable();
+            $table->string('note', 100)->nullable();
             $table->integer('done_by');
             $table->timestamps();
         });

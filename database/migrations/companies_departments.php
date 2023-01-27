@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('cid');                 // Companies ID
             $table->integer('mid')->nullable();     // Department Manager ID
             $table->integer('pdid')->nullable();    // Parent Department ID
-            $table->string('name');                 // Title Of the Department
+            $table->string('name', 100);            // Title Of the Department
             $table->timestamps();
         });
     }

@@ -13,15 +13,17 @@ return new class extends Migration
      */
 
     public function up() {
+
         Schema::create('employees_attachments', function (Blueprint $table) {
             $table->id();
             $table->integer('eid')->nullable();
+            $table->string('cpr', 45)->nullable();
             $table->string('title', 45)->nullable();
-            $table->string('type', 45)->nullable();
-            $table->string('path', 100)->nullable();
+            $table->json('attachment')->nullable();
             $table->integer('done_by')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**
@@ -31,7 +33,9 @@ return new class extends Migration
      */
 
     public function down() {
+
         Schema::dropIfExists('employees_attachments');
+        
     }
     
 };

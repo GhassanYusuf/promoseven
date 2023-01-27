@@ -1046,6 +1046,85 @@ class UserController extends Controller
 
     }
 
+
+    // Get Company Employees
+    public function getCompanyEmployees($cid) {
+
+        $query = ("
+        
+                    SELECT
+                        DISTINCT
+                        employee.id AS 'id', 
+                        UPPER(employee.name) AS 'name'
+                    FROM
+                        users AS employee
+                    LEFT JOIN
+                        employees_uppraisals AS uppraisal ON uppraisal.eid = employee.id
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = uppraisal.did
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
+                    WHERE
+                        company.id = ?
+                        AND
+                        employee.end_date IS NULL
+                    ORDER BY
+                        employee.name ASC
+
+                ");
+
+        // Executing The Query
+        $results = DB::select($query, [$cid]);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
+    // Get Department Employees
+    public function getDepartmentEmployees($did) {
+
+        $query = ("
+        
+                    SELECT
+                        DISTINCT
+                        employee.id AS 'id', 
+                        UPPER(employee.name) AS 'name'
+                    FROM
+                        users AS employee
+                    LEFT JOIN
+                        employees_uppraisals AS uppraisal ON uppraisal.eid = employee.id
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = uppraisal.did
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
+                    WHERE
+                        department.id = ?
+                        AND
+                        employee.end_date IS NULL
+                    ORDER BY
+                        employee.name ASC
+
+                ");
+
+        // Executing The Query
+        $results = DB::select($query, [$did]);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
+
     // Search By Visa Source
     public function search_visa($visa) {
 
@@ -1171,8 +1250,11 @@ class UserController extends Controller
 //--------------------------------------------------------------------
 
     public function update(Request $request, $id) {
+
+        // Finding User Via ID
         $user = User::find($id);
 
+        // Updating Data To the User From The $request Object
         $user->update($request->all());
         
         return $user;

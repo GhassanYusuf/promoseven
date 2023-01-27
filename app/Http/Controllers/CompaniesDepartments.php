@@ -20,25 +20,25 @@ class CompaniesDepartments extends Controller
         $query = ("
                     SELECT 
                         DISTINCT
-                        companies_departments.id,
-                        if(companies_departments.pdid IS NULL, 'NONE', companies_departments.pdid) as 'pdid',
-                        companies_departments.cid,
-                        if(companies_departments.mid IS NULL, 'NONE', companies_departments.mid) as 'mid',
+                        department.id,
+                        if(department.pdid IS NULL, 'NONE', department.pdid) as 'pdid',
+                        department.cid,
+                        if(department.mid IS NULL, 'NONE', department.mid) as 'mid',
                         if(parent.name IS NULL, 'NONE', parent.name) as 'parent',
                         UPPER(company.name) as 'company',
-                        UPPER(companies_departments.name) as 'department',
-                        UPPER(if(companies_departments.mid IS NULL, 'NONE', manager.name)) as 'manager',
+                        UPPER(department.name) as 'department',
+                        UPPER(if(department.mid IS NULL, 'NONE', manager.name)) as 'manager',
                         if(manager.picture IS NULL, 'NONE', manager.picture) as 'picture'
                     FROM 
-                        companies_departments 
+                        companies_departments AS department
                     LEFT JOIN
-                        companies as company on company.id = companies_departments.cid
+                        companies as company on company.id = department.cid
                     LEFT JOIN
-                        companies as parent on parent.id = companies_departments.pdid
+                        companies as parent on parent.id = department.pdid
                     LEFT JOIN
-                        users as manager on manager.id = companies_departments.mid
+                        users as manager on manager.id = department.mid
                     ORDER BY
-                        company.name, companies_departments.name ASC;
+                        company.name, department.name ASC;
                 ");
 
         // Result
@@ -79,25 +79,25 @@ class CompaniesDepartments extends Controller
         $query = ("
                     SELECT 
                         DISTINCT
-                        companies_departments.id,
-                        if(companies_departments.pdid IS NULL, 'NONE', companies_departments.pdid) as 'pdid',
-                        companies_departments.cid,
-                        if(companies_departments.mid IS NULL, 'NONE', companies_departments.mid) as 'mid',
+                        department.id,
+                        if(department.pdid IS NULL, 'NONE', department.pdid) as 'pdid',
+                        department.cid,
+                        if(department.mid IS NULL, 'NONE', department.mid) as 'mid',
                         if(parent.name IS NULL, 'NONE', parent.name) as 'parent',
                         UPPER(company.name) as 'company',
-                        UPPER(companies_departments.name) as 'department',
-                        UPPER(if(companies_departments.mid IS NULL, 'NONE', users.name)) as 'manager',
+                        UPPER(department.name) as 'department',
+                        UPPER(if(department.mid IS NULL, 'NONE', manager.name)) as 'manager',
                         if(manager.picture IS NULL, 'NONE', manager.picture) as 'picture'
                     FROM 
-                        companies_departments 
+                        companies_departments AS department
                     LEFT JOIN
-                        companies as company on company.id = companies_departments.cid
+                        companies as company on company.id = department.cid
                     LEFT JOIN
-                        companies as parent on parent.id = companies_departments.pdid
+                        companies as parent on parent.id = department.pdid
                     LEFT JOIN
-                        users on users.id = companies_departments.mid
+                        users as manager on manager.id = department.mid
                     WHERE
-                        companies_departments.id = ?
+                        department.id = ?
                 ");
 
         // Result

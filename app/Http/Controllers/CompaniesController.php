@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use stdClass;
 
 class CompaniesController extends Controller {
 
@@ -147,7 +148,7 @@ class CompaniesController extends Controller {
         if($validator->fails()) {          
             return response()->json(['error'=>$validator->errors()], 401);
         }
-   
+
         // If File Was Submitted
         if($file = $request->file('file')) {
 
@@ -165,6 +166,24 @@ class CompaniesController extends Controller {
 
             // Here We Define The Directory Path Of The File
             $fileDirectory      = public_path('dist\\companies\\'. $CompanyDirectory);
+
+        //==================================================================================================
+        // Making Record Object
+        //==================================================================================================
+            $record = new stdClass();
+            $record->company    = strtoupper($company->name);
+            $record->titel      = "CR";
+            $record->name       = 'cr.'. strtolower($file->getClientOriginalExtension());
+            $record->type       = strtolower($file->getClientOriginalExtension());
+            $record->url        = $file->storeAs('public/dist/companies/'. $record->company, $record->name);
+            $record->directory  = public_path('dist\\companies\\'. $record->company);
+            $record->path       = $record->directory . '\\' . $record->name;
+
+            // return json_encode($record);
+
+            // return json_decode(json_encode($record))->path;
+
+        //==================================================================================================
 
             // If The Path Was Not Existing Then Create It
             File::ensureDirectoryExists($fileDirectory);
@@ -184,15 +203,13 @@ class CompaniesController extends Controller {
                         UPDATE 
                             companies 
                         SET 
-                            cr_fileName = ?,
-                            cr_fileType = ?,
-                            cr_fileUrl = ?
+                            attachment = ?
                         WHERE 
                             id = ?
                     ");
 
             // Executing The Query
-            $results = DB::update($query, [$fileNewName, $file->getClientOriginalExtension(), $fileUrl, $company->id]);
+            $results = DB::update($query, [json_encode($record), $company->id]);
 
             // Successful Response Message
             return response()->json([

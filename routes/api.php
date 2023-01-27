@@ -233,6 +233,12 @@
         // Returns All Employees By Company Referance
         Route::get('employees/company/{company}', [UserController::class, 'search_company']);
 
+        // DropDown List : Get ID And Name Of the Employees Of A Company -> By Company ID
+        Route::get('employees/company/get/{cid}', [UserController::class, 'getCompanyEmployees']);
+
+        // DropDown List : Get ID And Name Of the Employees Of A Department -> By Department ID
+        Route::get('employees/department/get/{did}', [UserController::class, 'getDepartmentEmployees']);
+
         // Returns All Employees By Visa Referance
         Route::get('employees/visa/{visa}', [UserController::class, 'search_visa']);
 

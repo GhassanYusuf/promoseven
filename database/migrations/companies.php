@@ -11,17 +11,17 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    
+    public function up() {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 45);
-            $table->string('logo', 100)->nullable();
-            $table->string('cr', 45)->unique()->nullable();
-            $table->string('cr_attach', 100)->nullable();
-            $table->date('cr_expire')->nullable();
-            $table->string('vat_number', 100)->nullable();
-            $table->string('parent_company', 45)->nullable();
+            $table->string('name', 45);                         // Name Of the Company
+            $table->string('logo', 100)->nullable();            // Company Logo
+            $table->string('cr', 45)->unique()->nullable();     // CR Number
+            $table->json('attachment')->nullable();             // CR Attachment
+            $table->date('expire')->nullable();                 // Expire Date
+            $table->string('vat', 100)->nullable();             // VAT Number
+            $table->string('parent', 45)->nullable();           // Parent Company ID
             $table->timestamps();
         });
     }
@@ -31,8 +31,8 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+
+    public function down() {
         Schema::dropIfExists('companies');
     }
 };

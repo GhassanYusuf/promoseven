@@ -19,11 +19,13 @@ return new class extends Migration
             $table->integer('eid')->nullable();                 // Employee ID
             $table->integer('did')->nullable();                 // Department ID
             $table->integer('vid')->nullable();                 // Visa Source
-            $table->float('salary')->nullable();                // Salary Amount
-            $table->json('allowances')->nullable();             // Allowances
+            $table->date('visa_expire')->nullable();            // Visa Expire
             $table->string('position', 45)->nullable();         // Position Title
             $table->json('duties')->nullable();                 // Text Of Responsibilitis
-            $table->json('documents', 100)->nullable();         // Attached Documents
+            $table->float('salary')->nullable();                // Salary Amount
+            $table->json('allowances')->nullable();             // Allowances
+            $table->json('benefits')->nullable();               // Allowances
+            $table->json('documents')->nullable();              // Attached Documents
             $table->date('effective')->nullable();              // Effective Date
             $table->integer('doneBy')->nullable();              // The Person Who Created the Entry
             $table->timestamps();
