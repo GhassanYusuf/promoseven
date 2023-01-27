@@ -4,9 +4,11 @@
 //  Libraries Required
 //-------------------------------------------------------------------------
     
-    use Illuminate\Http\Request;
-    use Illuminate\Support\Facades\File;
-    use Illuminate\Support\Facades\Validator;
+    use Illuminate\Http\Request;                // To User Request Object
+    use Illuminate\Http\Response;               // To Be Able To Send Responces
+    use Illuminate\Support\Facades\DB;          // To Be Able To Talk To Database 
+    use Illuminate\Support\Facades\File;        // To Be Able To Work With Files
+    use Illuminate\Support\Facades\Validator;   // To Be Able To Validate Paramaters & Files
 
 //-------------------------------------------------------------------------
 //  List Of Functions - For Every Where
@@ -145,7 +147,7 @@
         
             Example :
 
-                Company CR          :   type = 'cr'     // 
+                Company CR          :   type = 'cr'
                 Company Logo        :   type = 'lg'
                 Employee Picture    :   type = 'ep'
                 Employee Documents  :   type = 'ed'
@@ -158,6 +160,9 @@
 
             // Files Buffer
             $files = array();
+
+            // The File Object
+            $object = new stdClass();
 
             // Identify The File Type
             switch ($type) {
@@ -217,37 +222,36 @@
             //----------------------------------------------------------------------
 
                 // Preparing The Variables
-                $file               = $request->file('file');
+                $file                   = $request->file('file');
 
                 // Convert The String OF the File Name To Lower Case
-                $file_name          = strtolower($file->getClientOriginalName());
+                $object->name           = strtolower($file->getClientOriginalName());
 
                 // Here We Define The Extension Of The File
-                $file_extension     = strtolower($file->getClientOriginalExtension());
+                $object->extension      = strtolower($file->getClientOriginalExtension());
 
                 // New File Name
-                $file_new_name      = date("Ymd_his") . "_" . $file_name;
+                $object->new_name       = date("Ymd_his") . "_" . $object->name;
 
                 // The Directory Name
-                $employee_directory = strtoupper($employee->cpr . '_' . $employee->name);
+                $object->directory      = strtoupper($employee->cpr . '_' . $employee->name);
                 
                 // Here We Store The File On To The Destination & Keep The File Origional Name In The Variable
-                $file_url           = $file->storeAs('public/dist/employees/'. $employee_directory . '/Attachments', $file_new_name);
+                $object->url            = $file->storeAs('public/dist/employees/'. $object->directory . '/Attachments', $object->new_name);
 
                 // Here We Define The Directory Path Of The File
-                $file_destination   = public_path('dist\\employees\\'. $employee_directory . '\\Attachments');
+                $object->path           = public_path('dist\\employees\\'. $object->directory . '\\Attachments');
 
                 // If The Path Was Not Existing Then Create It
-                File::ensureDirectoryExists($file_destination);
+                File::ensureDirectoryExists($object->path);
 
                 // Move the Stored File On the System To The Directory
-                $file->move($file_destination, $file_url);
+                $file->move($object->path, $object->url);
 
                 // Make Sure The File Is Not Empty
                 if(!empty($files)) {
                     foreach($files as $file) {
-                        // File::disk(['drivers' => 'local', 'root' => $destinationPath])->put($file->getClientOriginalName());
-                        File::disk(['drivers' => 'local', 'root' => $file_destination])->put($file_name);
+                        File::disk(['drivers' => 'local', 'root' => $object->path])->put($object->name);
                     }
                 }
 
@@ -256,25 +260,25 @@
             //----------------------------------------------------------------------
 
                 // This Is What Stores The Data In The Database
-                $save               = new Attachments();    // Openning A Record
-                $save->eid          = $employee->id;        // Employee ID
-                $save->cpr          = $employee->cpr;       // Employee CPR
-                $save->title        = $request->title;      // File Title
-                $save->name         = $fileOrigionalName;   // File Title
-                $save->type         = $fileExtensionName;   // File Type
-                $save->url          = $fileUrl;             // File URL
+                // $save               = new Attachments();    // Openning A Record From Attachments Controller Or Model
+                // $save->eid          = $employee->id;        // Employee ID
+                // $save->cpr          = $employee->cpr;       // Employee CPR
+                // $save->title        = $request->title;      // File Title
+                // $save->name         = $fileOrigionalName;   // File Title
+                // $save->type         = $fileExtensionName;   // File Type
+                // $save->url          = $fileUrl;             // File URL
+                // $save->path         = $fileDirectory . '\\' . date("Ymd_his") . "_" . $fileOrigionalName;
+                // $save->save();
 
-                // File Path
-                $save->path         = $fileDirectory . '\\' . date("Ymd_his") . "_" . $fileOrigionalName;
-
-                // Save To Database
-                $save->save();
+            //----------------------------------------------------------------------
+            // Reply Back
+            //----------------------------------------------------------------------
 
                 // Successful Response Message
                 return response()->json([
                     "success"   => true,
                     "message"   => "File Successfully Uploaded",
-                    "file"      => $fileNewName
+                    "file"      => $file
                 ]);
     
             }
