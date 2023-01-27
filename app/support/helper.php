@@ -232,7 +232,7 @@
                 $object->new_name       = date("Ymd_his") . "_" . $object->name;
 
                 // The Directory Name
-                $object->directory      = strtoupper($employee->cpr . '_' . $employee->name);
+                $object->directory      = strtoupper($record->cpr . '_' . $record->name);
                 
                 // Here We Store The File On To The Destination & Keep The File Origional Name In The Variable
                 $object->url            = $file->storeAs('public/dist/employees/'. $object->directory . '/Attachments', $object->new_name);
