@@ -260,7 +260,7 @@
             //----------------------------------------------------------------------
 
                 // This Is What Stores The Data In The Database
-                // $save               = new Attachments();    // Openning A Record From Attachments Controller Or Model
+                // $save               = new Attachments();    // Openning A Record From Attachments Model
                 // $save->eid          = $employee->id;        // Employee ID
                 // $save->cpr          = $employee->cpr;       // Employee CPR
                 // $save->title        = $request->title;      // File Title
