@@ -156,13 +156,11 @@
         
         */
 
-        function upload(Request $request, $type, $cpr) {
+        function upload(Request $request, $type, $rid) {
 
-            // Files Buffer
-            $files = array();
-
-            // The File Object
-            $object = new stdClass();
+            // Main Variables
+            $record = NULL;             // Files Buffer
+            $object = new stdClass();   // The File Object
 
             // Identify The File Type
             switch ($type) {
@@ -171,9 +169,9 @@
                     // Laravel Raw MySQL Methode
                     $query      = ("SELECT * FROM users WHERE cpr = ?");
                     // Executing The Query
-                    $employee   = json_decode(json_encode(DB::select($query, [$cpr])));
+                    $record     = json_decode(json_encode(DB::select($query, [$rid])));
                     // Read The Unique Record
-                    $employee   = $employee[0];
+                    $record     = $record[0];
                     // STOP
                     break;
 
@@ -200,7 +198,7 @@
             }
 
             // To Make Sure The Person Have A CPR
-            if(is_null($employee->cpr) || empty($employee->cpr)) {
+            if(is_null($record->id) || empty($record->id)) {
                 return response()->json(['error'=>'employee cpr number is missing, please updare the user profile with same cpr number'], 401);
             }
 
@@ -217,9 +215,9 @@
             // If File Was Submitted
             if($file = $request->file('file')) {
 
-            //----------------------------------------------------------------------
-            // Uploading The File Part
-            //----------------------------------------------------------------------
+                //----------------------------------------------------------------------
+                // Uploading The File Part
+                //----------------------------------------------------------------------
 
                 // Preparing The Variables
                 $file                   = $request->file('file');
@@ -255,9 +253,9 @@
                     }
                 }
 
-            //----------------------------------------------------------------------
-            // Database Part
-            //----------------------------------------------------------------------
+                //----------------------------------------------------------------------
+                // Database Part
+                //----------------------------------------------------------------------
 
                 // This Is What Stores The Data In The Database
                 // $save               = new Attachments();    // Openning A Record From Attachments Model
@@ -270,9 +268,9 @@
                 // $save->path         = $fileDirectory . '\\' . date("Ymd_his") . "_" . $fileOrigionalName;
                 // $save->save();
 
-            //----------------------------------------------------------------------
-            // Reply Back
-            //----------------------------------------------------------------------
+                //----------------------------------------------------------------------
+                // Reply Back
+                //----------------------------------------------------------------------
 
                 // Successful Response Message
                 return response()->json([
@@ -283,6 +281,7 @@
     
             }
         }
+
     }
 
 ?>
