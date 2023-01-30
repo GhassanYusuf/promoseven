@@ -12,8 +12,7 @@ return new class extends Migration
      * @return void
      */
 
-    public function up()
-    {
+    public function up() {
         Schema::create('employees_uppraisals', function (Blueprint $table) {
             $table->id();
             $table->integer('eid')->nullable();                 // Employee ID
@@ -26,7 +25,8 @@ return new class extends Migration
             $table->json('allowances')->nullable();             // Allowances
             $table->json('benefits')->nullable();               // Allowances
             $table->json('documents')->nullable();              // Attached Documents
-            $table->date('effective')->nullable();              // Effective Date
+            $table->date('start_date')->nullable();             // Start/Effective Date
+            $table->date('end_date')->nullable();               // Contract End Date
             $table->integer('doneBy')->nullable();              // The Person Who Created the Entry
             $table->timestamps();
         });
@@ -38,8 +38,7 @@ return new class extends Migration
      * @return void
      */
 
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists('employees_uppraisals');
     }
 };

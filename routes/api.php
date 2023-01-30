@@ -194,6 +194,9 @@
         // Fixed Function : Employees With Incomplete Profiles
         Route::get('employees/incomplete/search/{input}', [UserController::class, 'search_incomplete']);
 
+        // Get Employee Uppraisals
+        Route::get('employees/uppraisals/{eid}', [UserController::class, 'getEmployeeUppraisals']);
+
         // Fixed Function : Employees With Incomplete Profiles
         Route::get('employees/email/search/{input}', [UserController::class, 'search_email']);
 

@@ -578,10 +578,16 @@ class UserController extends Controller
         $file = Attachments::find($id);
         
         // The Place Where The File Is
-        $file_path = $file->path;
+        $file_path = $file->name;
+
+        // return $file->name;
 
         // This is a test
-        return $file_path;
+        // File::delete($file_path);
+        return public_path('/employees') . $file_path;
+
+        // unlink($file_path);
+        // return app_path().'/images/news/';
         
         if ($file->attachments_file != null && File::disk('public')->exists($file_path)){
             File::disk('public/dist/employees/')->delete($file_path);
@@ -1046,6 +1052,67 @@ class UserController extends Controller
 
     }
 
+    // Get : Employees Uppraisals
+    public function getEmployeeUppraisals($eid) {
+
+        $query = ("
+                    SELECT 
+                        uppraisal.id AS 'id',
+                        employee.id AS 'eid',
+                        company.id AS 'cid',
+                        uppraisal.did AS 'did',
+                        UPPER(if(employee.nationality = 'BHR', 'NONE', visa.id)) AS 'vid',
+                        UPPER(if(employee.nationality = 'BHR', 'NONE', visa.name)) AS 'visa',
+                        UPPER(if(employee.nationality = 'BHR', 'NONE', uppraisal.visa_expire)) as 'visa_expire',
+                        -- UPPER(employee.name) AS 'name',
+                        UPPER(company.name) AS 'company',
+                        UPPER(department.name) AS 'department',
+                        UPPER(uppraisal.position) AS 'position',
+                        UPPER(uppraisal.start_date) AS 'start',
+                        UPPER(uppraisal.end_date) AS 'end',
+                        UPPER(ROUND(uppraisal.salary, 0)) AS 'salary',
+                        UPPER(if(ROUND((uppraisal.salary - LAG(uppraisal.salary, 1) OVER (ORDER BY uppraisal.start_date ASC)), 0) IS NULL, 0, ROUND((uppraisal.salary - LAG(uppraisal.salary, 1) OVER (ORDER BY uppraisal.start_date ASC)), 0))) AS 'increment',
+                        UPPER(IF(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)) IS NULL, IF(employee.end_date IS NULL, TIMESTAMPDIFF(MONTH, uppraisal.start_date, now()), TIMESTAMPDIFF(MONTH, employee.end_date, uppraisal.start_date)),TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)))) as 'months',
+                        UPPER(
+                            if(
+                                    ROUND(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)) * uppraisal.salary, 0) IS NULL, 
+                                    ROUND(IF(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)) IS NULL, IF(employee.end_date IS NULL, TIMESTAMPDIFF(MONTH, uppraisal.start_date, now()), TIMESTAMPDIFF(MONTH, employee.end_date, uppraisal.start_date)),TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC))) * uppraisal.salary, 0), 
+                                    ROUND(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)) * uppraisal.salary, 0)
+                                )
+                            ) AS 'earning',
+                        enroller.id AS 'doneBy_id',
+                        UPPER(enroller.name) AS 'doneBy'
+                    FROM 
+                        employees_uppraisals AS uppraisal
+                    LEFT JOIN
+                        users AS employee ON uppraisal.eid = employee.id
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = uppraisal.did
+                    LEFT JOIN
+                        companies AS company ON company.id = department.cid
+                    LEFT JOIN
+                        employees_visas AS visa ON visa.id = uppraisal.vid
+                    LEFT JOIN
+                        users AS enroller ON enroller.id = uppraisal.doneBy
+                    WHERE
+                        employee.id = ?
+                    ORDER BY
+                        uppraisal.start_date DESC,
+                        employee.name ASC
+                ");
+
+        // Executing The Query
+        $results = DB::select($query, [$eid]);
+
+        // If No Results
+        if(sizeOf($results) == 0) {
+            return response()->json($results, 400);
+        }
+
+        // Return The Results
+        return $results;
+
+    }
 
     // Get Company Employees
     public function getCompanyEmployees($cid) {
