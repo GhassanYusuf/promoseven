@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use stdClass;
 
 class UserController extends Controller
 {
@@ -450,26 +451,40 @@ class UserController extends Controller
 
             // Preparing Variables
             $picture            = $request->file('picture');
-            $pictureExtension   = strtolower($picture->getClientOriginalExtension());
-            $pictureNewName     = 'profile.' . $pictureExtension;
-            $EmployeeDirectory  = str_replace(' ', '_', strtoupper($employee->cpr . '_' . $employee->name));
-            $fileName           = $picture->storeAs('public/dist/employees/'. $EmployeeDirectory, $pictureNewName);
-            $destinationPath    = public_path('dist\\employees\\' . $EmployeeDirectory);
-            $picture->move($destinationPath, $fileName);
+
+            // Make A New Object
+            $details            = new stdClass();
+            $details->extension = strtolower($picture->getClientOriginalExtension());
+            $details->name      = 'profile.' . $details->extension;
+            $details->folder    = str_replace('-', '_', str_replace(' ', '_', strtoupper($employee->cpr . '_' . $employee->name)));
+            $details->url       = $picture->storeAs('public/dist/employees/'. $details->folder, $details->name);
+            $details->path      = public_path('dist\\employees\\' . $details->folder);
+
+            // If The Path Was Not Existing Then Create It
+            File::ensureDirectoryExists($details->folder);
+            
+            // Moving The File To the Folder
+            $picture->move($details->path, $details->url);
+
+            // Updatin Path After Moving The File
+            $details->path      = $details->path . '\\' . $details->name;
+
+            // Generate JSON Format
+            $json               = json_encode($details);
 
             // Laravel Raw MySQL Methode
-            $query = "UPDATE users SET users.picture = ? WHERE cpr = ?";
+            $query              = "UPDATE users SET users.picture = ? WHERE cpr = ?";
 
             // Executing The Query
-            $results = DB::update($query, [$fileName, $employee->cpr]);
+            $results            = DB::update($query, [$json, $employee->cpr]);
 
             // Return A Response
             return response()->json([
                 "success"   => true,
                 "message"   => "File successfully uploaded",
-                "fileName"  => $pictureNewName,
-                "filePath"  => $destinationPath . '\\' . $pictureNewName,
-                "fileURL"   => $fileName
+                "fileName"  => $details->name,
+                "filePath"  => $details->path,
+                "fileURL"   => $details->url
             ]);
   
         }
@@ -512,49 +527,40 @@ class UserController extends Controller
             // Getting File Object From Request With Name 'file'
             $file               = $request->file('file');
 
-            // Convert The String OF The File Name To Lower Case
-            $fileOrigionalName  = strtolower($file->getClientOriginalName());
-
-            // New File Name
-            $fileNewName        = str_replace(' ', '_', date("Ymd_hisA") . "_" . str_replace('-', '_', $fileOrigionalName));
-
-            // The Directory Name
-            $EmployeeDirectory  = str_replace(' ', '_', strtoupper($employee->cpr . '_' . $employee->name));
-
-            // Here We Define The Extension Of The File
-            $fileExtensionName  = strtolower($file->getClientOriginalExtension());
-            
-            // Here We Store The File On To The Destination & Keep The File Origional Name In The Variable
-            $fileUrl            = $file->storeAs('public/dist/employees/'. $EmployeeDirectory . '/Attachments', $fileNewName);
-
-            // Here We Define The Directory Path Of The File
-            $fileDirectory      = public_path('dist\employees\\'. $EmployeeDirectory . '\\Attachments');
+            // Preparing Object
+            $details            = new stdClass();
+            $details->name      = str_replace(' ', '_', date("Ymd_hisA") . "_" . str_replace('-', '_', strtolower($file->getClientOriginalName())));
+            $details->extension = strtolower($file->getClientOriginalExtension());
+            $details->folder    = str_replace(' ', '_', str_replace('-', '_', strtoupper($employee->cpr . '_' . $employee->name)));
+            $details->url       = $file->storeAs('public/dist/employees/'. $details->folder . '/Attachments', $details->name);
+            $details->path      = public_path('dist\employees\\'. $details->folder . '\\Attachments');
 
             // If The Path Was Not Existing Then Create It
-            File::ensureDirectoryExists($fileDirectory);
+            File::ensureDirectoryExists($details->path);
 
             // Move the Stored File On the System To The Directory
-            $file->move($fileDirectory, $fileUrl);
+            $file->move($details->path, $details->url);
+
+            // Updating Path After File Move
+            $details->path = $details->path . '\\' . $details->name;
         
             // This Is What Stores The Data In The Database
             $save               = new Attachments();                        // Openning A Record
             $save->eid          = $employee->id;                            // Employee ID
             $save->cpr          = $employee->cpr;                           // Employee CPR
             $save->title        = $request->title;                          // File Title
-            $save->name         = $fileNewName;                             // File Title
-            $save->type         = $fileExtensionName;                       // File Type
-            $save->url          = $fileUrl;                                 // File URL
-            $save->path         = $fileDirectory . '\\' . $fileNewName;     // File Storage Path
+            $save->name         = $details->name;                           // File Title
+            $save->type         = $details->extension;                      // File Type
+            $save->file         = json_encode($details);                    // File Storage Path
             $save->save();                                                  // Save Record To Database
 
             // Successful Response Message
             return response()->json([
-                "success"   => true,
-                "recordID"  => $save->id,
-                "message"   => "File Successfully Uploaded",
-                "fileName"  => $save->name,
-                "filePath"  => $save->path,
-                "fileURL"   => $save->url
+                "success"       => true,
+                "recordID"      => $save->id,
+                "message"       => "File Successfully Uploaded",
+                "fileName"      => $save->name,
+                "fileDetails"   => $save->file
             ]);
   
         }
@@ -568,16 +574,16 @@ class UserController extends Controller
         $file = Attachments::find($id);
         
         // The Place Where The File Is
-        $file_path = $file->path;
+        $file_path = json_decode($file->file)->path;
 
-        // return $file_path;
         // if(File::exists($file_path)) {
-        //     return $file_path;
+        //     return json_decode($file->file)->path;
         // } else {
-        //     return "file is NOT available";
+        //     return $file->file;
         // }
-        
-        if ($file->path != null && File::exists($file_path)){
+
+        // Check File Path Is Not Null And Path Of The File Exist
+        if ($file_path != null && File::exists($file_path)){
             // File::disk('public/dist/employees/')->delete($file_path);
             if(File::delete($file_path)) {
                 $query = $file->delete();
