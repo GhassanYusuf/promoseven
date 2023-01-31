@@ -446,19 +446,14 @@ class UserController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);                        
         }
  
-        if ($picture = $request->file('picture')) {
-
-            // The Directory Name
-            $EmployeeDirectory  = strtoupper($employee->cpr . '_' . $employee->name);
+        if ($request->file('picture')) {
 
             // Preparing Variables
             $picture            = $request->file('picture');
             $pictureExtension   = strtolower($picture->getClientOriginalExtension());
-
-            // $name               = $picture->getClientOriginalName();
-            $name               = 'profile.' . $pictureExtension;
-
-            $fileName           = $picture->storeAs('public/dist/employees/'. $EmployeeDirectory, $name);
+            $pictureNewName     = 'profile.' . $pictureExtension;
+            $EmployeeDirectory  = str_replace(' ', '_', strtoupper($employee->cpr . '_' . $employee->name));
+            $fileName           = $picture->storeAs('public/dist/employees/'. $EmployeeDirectory, $pictureNewName);
             $destinationPath    = public_path('dist\\employees\\' . $EmployeeDirectory);
             $picture->move($destinationPath, $fileName);
 
@@ -470,9 +465,11 @@ class UserController extends Controller
 
             // Return A Response
             return response()->json([
-                "success" => true,
-                "message" => "File successfully uploaded",
-                "picture" => $results
+                "success"   => true,
+                "message"   => "File successfully uploaded",
+                "fileName"  => $pictureNewName,
+                "filePath"  => $destinationPath . '\\' . $pictureNewName,
+                "fileURL"   => $fileName
             ]);
   
         }
