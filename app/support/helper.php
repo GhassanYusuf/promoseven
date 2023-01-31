@@ -95,9 +95,9 @@
                 $month  = NULL;
                 $year   = NULL;
 
-                if($data->experiance->y != 0) { $year = $data->validity->y . " <sub>YEARS</sub> "; }
-                if($data->experiance->m != 0) { $month = $data->validity->m . " <sub>MONTHS</sub> "; }
-                if($data->experiance->d != 0) { $day = $data->validity->d . " <sub>DAYS</sub> "; }
+                // if($data->experiance->y != 0) { $year = $data->validity->y . " <sub>YEARS</sub> "; }
+                // if($data->experiance->m != 0) { $month = $data->validity->m . " <sub>MONTHS</sub> "; }
+                // if($data->experiance->d != 0) { $day = $data->validity->d . " <sub>DAYS</sub> "; }
 
                 return $year . $month . $day;
             } else {
