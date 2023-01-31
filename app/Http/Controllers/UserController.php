@@ -480,22 +480,24 @@ class UserController extends Controller
   
     }
 
-    // Uploads A File
+    // Uploads A File - Working 100%
     public function attachmentUpload(Request $request, $cpr) {
  
         // Laravel Raw MySQL Methode
-        $query = ("SELECT * FROM users WHERE cpr = ?");
+        $query = ("SELECT * FROM users AS employee WHERE employee.cpr = ?");
         
         // Executing The Query
         $employee = json_decode(json_encode(DB::select($query, [$cpr])));
 
-        // Read The Unique Record
-        $employee = $employee[0];
-
-        // To Make Sure The Person Have A CPR
-        if(is_null($employee->cpr) || empty($employee->cpr)) {
-            return response()->json(['error'=>'employee cpr number is missing, please updare the user profile with same cpr number'], 401);
+        // Make Sure The Result Is Not 0 Records & Not More Than One Record
+        if(sizeof($employee) < 1) {
+            return response()->json(['error'=>'No Records Found, Or CPR Field Of The Employee Is Not Set'], 401);
+        } elseif(sizeof($employee) > 1) {
+            return response()->json(['error'=>'Duplicate Employee Records Found'], 401);
         }
+
+        // Make The Data In Single Object
+        $employee = $employee[0];
 
         // Validate File Extension Type And File Size
         $validator = Validator::make($request->all(),[ 
@@ -508,101 +510,91 @@ class UserController extends Controller
         }
    
         // If File Was Submitted
-        if($file = $request->file('file')) {
+        if($request->file('file')) {
 
-            // Preparing The Variables
-            $submittedFile      = $request->file('file');
+            // Getting File Object From Request With Name 'file'
+            $file               = $request->file('file');
 
-            // Convert The String OF the File Name To Lower Case
-            $fileOrigionalName  = strtolower($submittedFile->getClientOriginalName());
+            // Convert The String OF The File Name To Lower Case
+            $fileOrigionalName  = strtolower($file->getClientOriginalName());
 
             // New File Name
-            $fileNewName        = date("Ymd_his") . "_" . $fileOrigionalName;
+            $fileNewName        = str_replace(' ', '_', date("Ymd_hisA") . "_" . str_replace('-', '_', $fileOrigionalName));
 
             // The Directory Name
-            $EmployeeDirectory  = strtoupper($employee->cpr . '_' . $employee->name);
+            $EmployeeDirectory  = str_replace(' ', '_', strtoupper($employee->cpr . '_' . $employee->name));
 
             // Here We Define The Extension Of The File
-            $fileExtensionName  = strtolower($submittedFile->getClientOriginalExtension());
+            $fileExtensionName  = strtolower($file->getClientOriginalExtension());
             
             // Here We Store The File On To The Destination & Keep The File Origional Name In The Variable
             $fileUrl            = $file->storeAs('public/dist/employees/'. $EmployeeDirectory . '/Attachments', $fileNewName);
 
             // Here We Define The Directory Path Of The File
-            $fileDirectory      = public_path('dist\\employees\\'. $EmployeeDirectory . '\\Attachments');
+            $fileDirectory      = public_path('dist\employees\\'. $EmployeeDirectory . '\\Attachments');
 
             // If The Path Was Not Existing Then Create It
             File::ensureDirectoryExists($fileDirectory);
 
             // Move the Stored File On the System To The Directory
-            $submittedFile->move($fileDirectory, $fileUrl);
-
-            // Make Sure The File Is Not Empty
-            if(!empty($files)) {
-                foreach($files as $file) {
-                    // File::disk(['drivers' => 'local', 'root' => $destinationPath])->put($file->getClientOriginalName());
-                    File::disk(['drivers' => 'local', 'root' => $fileDirectory])->put($fileOrigionalName);
-                }
-            }
+            $file->move($fileDirectory, $fileUrl);
         
             // This Is What Stores The Data In The Database
-            $save               = new Attachments();    // Openning A Record
-            $save->eid          = $employee->id;        // Employee ID
-            $save->cpr          = $employee->cpr;       // Employee CPR
-            $save->title        = $request->title;      // File Title
-            $save->name         = $fileOrigionalName;   // File Title
-            $save->type         = $fileExtensionName;   // File Type
-            $save->url          = $fileUrl;             // File URL
-
-            // File Path
-            $save->path         = $fileDirectory . '\\' . date("Ymd_his") . "_" . $fileOrigionalName;
-
-            // Save To Database
-            $save->save();
+            $save               = new Attachments();                        // Openning A Record
+            $save->eid          = $employee->id;                            // Employee ID
+            $save->cpr          = $employee->cpr;                           // Employee CPR
+            $save->title        = $request->title;                          // File Title
+            $save->name         = $fileNewName;                             // File Title
+            $save->type         = $fileExtensionName;                       // File Type
+            $save->url          = $fileUrl;                                 // File URL
+            $save->path         = $fileDirectory . '\\' . $fileNewName;     // File Storage Path
+            $save->save();                                                  // Save Record To Database
 
             // Successful Response Message
             return response()->json([
                 "success"   => true,
+                "recordID"  => $save->id,
                 "message"   => "File Successfully Uploaded",
-                "file"      => $fileNewName
+                "fileName"  => $save->name,
+                "filePath"  => $save->path,
+                "fileURL"   => $save->url
             ]);
   
         }
   
     }
 
-    // Delete Aattachment
+    // Delete Aattachment - Working 100%
     public function attachmentDelete($id) {
 
         // Deleteing The Note By Its ID
         $file = Attachments::find($id);
         
         // The Place Where The File Is
-        $file_path = $file->name;
+        $file_path = $file->path;
 
-        // return $file->name;
-
-        // This is a test
-        // File::delete($file_path);
-        return public_path('/employees') . $file_path;
-
-        // unlink($file_path);
-        // return app_path().'/images/news/';
+        // return $file_path;
+        // if(File::exists($file_path)) {
+        //     return $file_path;
+        // } else {
+        //     return "file is NOT available";
+        // }
         
-        if ($file->attachments_file != null && File::disk('public')->exists($file_path)){
-            File::disk('public/dist/employees/')->delete($file_path);
-            return response();
-        }
-        
-        $query = $file->delete();
-        
-        if ($query) {
-            return response()->json(['code'=>1, 'msg'=>'File has been deleted successfully']);
+        if ($file->path != null && File::exists($file_path)){
+            // File::disk('public/dist/employees/')->delete($file_path);
+            if(File::delete($file_path)) {
+                $query = $file->delete();
+                if ($query) {
+                    return response()->json(['code'=>1, 'msg'=>'File has been deleted successfully']);
+                } else {
+                    return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
+                }
+            } else {
+                return response()->json(['error'=>0, 'msg'=>'file not deleted']);
+            }
         } else {
-            return response()->json(['code'=>0, 'msg'=>'Something went wrong']);
+            return response()->json(['error'=>0, 'msg'=>'No Record Of The File Found']);
         }
-
-        // return attachments::destroy($id);
 
     }
 
