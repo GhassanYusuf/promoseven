@@ -155,6 +155,9 @@
         // Fixed Function : Employees Passports In Deposits
         Route::get('employees/passport/deposit/all', [UserController::class, 'deposits']);
 
+        // Fixed Function : Show Single Employees Passport Transactions 
+        Route::get('employees/passport/transactions/{id}', [PassportsController::class, 'show']);
+
         // Fixed Function : Employees Passports In Deposits
         Route::get('employees/passport/deposit/search/{input}', [UserController::class, 'search_deposits']);
 
@@ -214,6 +217,9 @@
 
         // Profile Picture Upload
         Route::post('employees/picture/upload/{cpr}', [UserController::class, 'pictureUpload']);
+
+        // Profile Picture Upload
+        Route::get('employees/picture/remove/{cpr}', [UserController::class, 'pictureRemove']);
 
         // Returns Employee Files By CPR
         Route::get('employees/files/{cpr}', [UserController::class, 'attachmentAll']);

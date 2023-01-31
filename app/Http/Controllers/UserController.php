@@ -377,7 +377,7 @@ class UserController extends Controller
     }
 
 //--------------------------------------------------------------------
-//  For Files Of the User
+//  Upload & Download & Picture Attachment
 //--------------------------------------------------------------------
 
     // Get All The Files Of This User
@@ -492,6 +492,39 @@ class UserController extends Controller
   
     }
 
+    // Remove A Picture
+    public function pictureRemove($cpr) {
+
+        // Laravel Raw MySQL Methode
+        $query = ("SELECT * FROM users WHERE cpr = ?");
+        
+        // Executing The Query
+        $employee = json_decode(json_encode(DB::select($query, [$cpr])));
+
+        // Read The Unique Record
+        $employee = $employee[0];
+
+        // To Make Sure The Person Have A CPR
+        if(is_null($employee->cpr) || empty($employee->cpr)) {
+            return response()->json(['error'=>'employee cpr number is missing, please updare the user profile with same cpr number'], 401);
+        }
+
+        // Extracting Picture Information
+        $picture = json_decode($employee->picture);
+
+        if(File::exists($picture->path)) {
+            if(File::delete($picture->path)) {
+                // Laravel Raw MySQL Methode
+                $query = ("UPDATE users SET picture = NULL WHERE cpr = ?");
+                DB::update($query, [$cpr]);
+                return "File Exist, So Its Deleted & Profile Updated";
+            }
+        } else {
+            return "File Dont Exist";
+        }
+
+    }
+
     // Uploads A File - Working 100%
     public function attachmentUpload(Request $request, $cpr) {
  
@@ -575,12 +608,6 @@ class UserController extends Controller
         
         // The Place Where The File Is
         $file_path = json_decode($file->file)->path;
-
-        // if(File::exists($file_path)) {
-        //     return json_decode($file->file)->path;
-        // } else {
-        //     return $file->file;
-        // }
 
         // Check File Path Is Not Null And Path Of The File Exist
         if ($file_path != null && File::exists($file_path)){
