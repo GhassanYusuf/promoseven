@@ -40,7 +40,7 @@ class PassportsController extends Controller {
         $request->validate([
             'eid'           => 'required',
             'state'         => 'required',
-            // 'done_by'       => 'required',
+            'done_by'       => 'required',
         ]);
 
         // Inser To Datatable
@@ -58,7 +58,20 @@ class PassportsController extends Controller {
     public function show($id) {
 
         // Laravel Raw MySQL Methode
-        $query = ("SELECT * FROM employees_passport_transactions WHERE eid = ? ORDER BY created_at DESC");
+        $query = ("
+                    SELECT
+                        enroller.name as 'name',
+                        passport.* 
+                    FROM 
+                        employees_passport_transactions AS passport
+                    LEFT JOIN
+                        users as enroller ON passport.done_by = enroller.id
+                    WHERE 
+                        passport.eid = ? 
+                    ORDER BY 
+                        created_at 
+                        DESC
+                ");
 
         // Executing The Query
         $results = DB::select($query, [$id]);

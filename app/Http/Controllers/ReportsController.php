@@ -367,7 +367,6 @@ class ReportsController extends Controller
                                 users.id,
                                 users.name,
                                 users.end_date,
-                                employees_passport_transactions.type,
                                 (select state from employees_passport_transactions WHERE eid = users.id ORDER BY employees_passport_transactions.created_at DESC LIMIT 1) as state
                             FROM 
                                 employees_passport_transactions

@@ -16,7 +16,7 @@ class employees_passport_transactions extends Model
         'type',
         'state',
         'note',
-        'doneby',
+        'done_by',
     ];
 
 }
