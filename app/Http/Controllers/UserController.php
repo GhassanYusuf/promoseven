@@ -13,127 +13,129 @@ use stdClass;
 class UserController extends Controller
 {
 
-    private $emp = ("
-                        SELECT
-                            users.id as 'id',
-                            UPPER(code) as 'code',
-                            ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(users.birthdate, '%Y-%m-%d'))/365, 0) AS 'age',
-                            UPPER(users.name) as 'name',
-                            if(users.gender = 'M', 'MALE', 'FEMALE') as 'gender',
+    private $emp =      ("
+                            SELECT
+                                employee.id as 'id',
+                                UPPER(code) as 'code',
+                                ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(employee.birthdate, '%Y-%m-%d'))/365, 0) AS 'age',
+                                UPPER(employee.name) as 'name',
+                                if(employee.gender = 'M', 'MALE', 'FEMALE') as 'gender',
 
-                            /* Nationality */
-                            JSON_OBJECT(
-                                'id', UPPER(country.id),
-                                'iso', UPPER(country.iso),
-                                'iso3', UPPER(country.iso3),
-                                'name', UPPER(country.name)
-                            ) as 'nationality',
+                                /* Nationality */
+                                JSON_OBJECT(
+                                    'id', UPPER(country.id),
+                                    'iso', UPPER(country.iso),
+                                    'iso3', UPPER(country.iso3),
+                                    'name', UPPER(country.name)
+                                ) as 'nationality',
 
-                            users.bank_account,
-                            users.picture,
-                            users.contact,
-                            users.birthdate,
-                            
-                            /* Employment */
-                            JSON_OBJECT(
-                                'id', company.id,
-                                'company', UPPER(company.name),
-                                'did', department.id,
-                                'department', UPPER(department.name),
-                                'position', UPPER(position),
-                                'accessLevel', UPPER(users.accesslevel),
-                                'start', users.join_date,
-                                'end', users.end_date,
-                                'experiance', JSON_OBJECT(
-                                    'y', if(users.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, users.join_date, now()))), UPPER(CONCAT( timestampdiff(year, users.join_date, users.end_date)))),
-                                    'm', if(users.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, users.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, users.join_date, users.end_date) % 12))),
-                                    'd', if(users.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, users.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, users.join_date, users.end_date) % 30.4375))))
-                                ),
-                                'indicator', if(users.end_date IS NULL, 'G', 'R')
-                            ) as employment,
-                            
-                            /* VISA */
-                            JSON_OBJECT(
-                                'id', visa.id,
-                                'company', UPPER(visa.name),
-                                'expire', users.visa_expire,
-                                'validity', JSON_OBJECT(
-                                    'y', UPPER(CONCAT( timestampdiff(year, now(), users.visa_expire))),
-                                    'm', UPPER(CONCAT(timestampdiff (month, now(), users.visa_expire) % 12)),
-                                    'd', UPPER(CONCAT(floor (timestampdiff(day, now(), users.visa_expire) % 30.4375)))
-                                ),
-                                'indicator', (
-                                    CASE
-                                    WHEN DATEDIFF(users.visa_expire, now()) > 30 THEN 'G'
-                                    WHEN DATEDIFF(users.visa_expire, now()) < 30 AND DATEDIFF(users.visa_expire, now()) > 0 THEN 'Y'
-                                    WHEN DATEDIFF(users.visa_expire, now()) < 0 THEN 'R'
-                                    ELSE 'R'
-                                    END
-                                )
-                            ) as visa,
-                            
-                            /* CPR */
-                            JSON_OBJECT(
-                                'id', users.cpr,
-                                'expire', users.cpr_expire,
-                                'validity', JSON_OBJECT(
-                                    'y', UPPER(CONCAT(timestampdiff(year, now(), users.cpr_expire))),
-                                    'm', UPPER(CONCAT(timestampdiff (month, now(), users.cpr_expire) % 12)),
-                                    'd', UPPER(CONCAT(floor (timestampdiff(day, now(), users.cpr_expire) % 30.4375)))
-                                ),
-                                'indicator', (
-                                    CASE
-                                    WHEN DATEDIFF(users.cpr_expire, now()) > 30 THEN 'G'
-                                    WHEN DATEDIFF(users.cpr_expire, now()) < 30 AND DATEDIFF(users.cpr_expire, now()) > 0 THEN 'Y'
-                                    WHEN DATEDIFF(users.cpr_expire, now()) < 0 THEN 'R'
-                                    ELSE 'R'
-                                    END
-                                )
-                            ) as cpr,
-                            
-                            /* PASSPORT */
-                            JSON_OBJECT(
-                                'id', users.passport,
-                                'expire', users.passport_expire,
-                                'validity', JSON_OBJECT(
-                                    'y', UPPER(CONCAT( timestampdiff(year, now(), users.passport_expire))),
-                                    'm', UPPER(CONCAT(timestampdiff (month, now(), users.passport_expire) % 12)),
-                                    'd', UPPER(CONCAT(floor (timestampdiff(day, now(), users.passport_expire) % 30.4375)))
-                                ),
-                                'indicator', (
-                                    CASE
-                                    WHEN DATEDIFF(users.passport_expire, now()) > 180 THEN 'G'
-                                    WHEN DATEDIFF(users.passport_expire, now()) < 180 AND DATEDIFF(users.passport_expire, now()) > 0 THEN 'Y'
-                                    WHEN DATEDIFF(users.passport_expire, now()) < 0 THEN 'R'
-                                    ELSE 'R'
-                                    END
-                                ),
-                                'state', (select state from employees_passport_transactions WHERE eid = users.id ORDER BY employees_passport_transactions.created_at DESC LIMIT 1)
-                            ) as passport,
+                                employee.bank_account,
+                                employee.picture,
+                                employee.contact,
+                                employee.birthdate,
+                                
+                                /* Employment */
+                                JSON_OBJECT(
+                                    'id', company.id,
+                                    'company', UPPER(company.name),
+                                    'did', department.id,
+                                    'department', UPPER(department.name),
+                                    'position', UPPER(position),
+                                    'accessLevel', UPPER(employee.accesslevel),
+                                    'start', employee.join_date,
+                                    'end', employee.end_date,
+                                    'experiance', JSON_OBJECT(
+                                        'y', if(employee.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, employee.join_date, now()))), UPPER(CONCAT( timestampdiff(year, employee.join_date, employee.end_date)))),
+                                        'm', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, employee.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, employee.join_date, employee.end_date) % 12))),
+                                        'd', if(employee.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, employee.end_date) % 30.4375))))
+                                    ),
+                                    'indicator', if(employee.end_date IS NULL, 'G', 'R')
+                                ) as employment,
+                                
+                                /* VISA */
+                                JSON_OBJECT(
+                                    'id', visa.id,
+                                    'company', UPPER(visa.name),
+                                    'expire', position.visa_expire,
+                                    'validity', JSON_OBJECT(
+                                        'y', UPPER(CONCAT( timestampdiff(year, now(), position.visa_expire))),
+                                        'm', UPPER(CONCAT(timestampdiff (month, now(), position.visa_expire) % 12)),
+                                        'd', UPPER(CONCAT(floor (timestampdiff(day, now(), position.visa_expire) % 30.4375)))
+                                    ),
+                                    'indicator', (
+                                        CASE
+                                        WHEN DATEDIFF(position.visa_expire, now()) > 30 THEN 'G'
+                                        WHEN DATEDIFF(position.visa_expire, now()) < 30 AND DATEDIFF(position.visa_expire, now()) > 0 THEN 'Y'
+                                        WHEN DATEDIFF(position.visa_expire, now()) < 0 THEN 'R'
+                                        ELSE 'R'
+                                        END
+                                    )
+                                ) as visa,
+                                
+                                /* CPR */
+                                JSON_OBJECT(
+                                    'id', employee.cpr,
+                                    'expire', employee.cpr_expire,
+                                    'validity', JSON_OBJECT(
+                                        'y', UPPER(CONCAT(timestampdiff(year, now(), employee.cpr_expire))),
+                                        'm', UPPER(CONCAT(timestampdiff (month, now(), employee.cpr_expire) % 12)),
+                                        'd', UPPER(CONCAT(floor (timestampdiff(day, now(), employee.cpr_expire) % 30.4375)))
+                                    ),
+                                    'indicator', (
+                                        CASE
+                                        WHEN DATEDIFF(employee.cpr_expire, now()) > 30 THEN 'G'
+                                        WHEN DATEDIFF(employee.cpr_expire, now()) < 30 AND DATEDIFF(employee.cpr_expire, now()) > 0 THEN 'Y'
+                                        WHEN DATEDIFF(employee.cpr_expire, now()) < 0 THEN 'R'
+                                        ELSE 'R'
+                                        END
+                                    )
+                                ) as cpr,
+                                
+                                /* PASSPORT */
+                                JSON_OBJECT(
+                                    'id', employee.passport,
+                                    'expire', employee.passport_expire,
+                                    'validity', JSON_OBJECT(
+                                        'y', UPPER(CONCAT( timestampdiff(year, now(), employee.passport_expire))),
+                                        'm', UPPER(CONCAT(timestampdiff (month, now(), employee.passport_expire) % 12)),
+                                        'd', UPPER(CONCAT(floor (timestampdiff(day, now(), employee.passport_expire) % 30.4375)))
+                                    ),
+                                    'indicator', (
+                                        CASE
+                                        WHEN DATEDIFF(employee.passport_expire, now()) > 180 THEN 'G'
+                                        WHEN DATEDIFF(employee.passport_expire, now()) < 180 AND DATEDIFF(employee.passport_expire, now()) > 0 THEN 'Y'
+                                        WHEN DATEDIFF(employee.passport_expire, now()) < 0 THEN 'R'
+                                        ELSE 'R'
+                                        END
+                                    ),
+                                    'state', (select state from employees_passport_transactions WHERE eid = employee.id ORDER BY employees_passport_transactions.created_at DESC LIMIT 1)
+                                ) as passport,
 
-                            (
-                                CASE
-                                WHEN users.passport IS NULL THEN 'I'
-                                WHEN users.passport_expire IS NULL THEN 'I'
-                                WHEN users.cpr IS NULL THEN 'I'
-                                WHEN users.cpr_expire IS NULL THEN 'I'
-                                WHEN department.cid IS NULL THEN 'I'
-                                WHEN users.visa IS NULL AND users.nationality <> 'BAHRAIN' THEN 'I'
-                                WHEN users.visa_expire IS NULL AND users.nationality <> 'BAHRAIN' THEN 'I'
-                                ELSE 'C'
-                                END
-                            ) as incomplete
-                        
-                        FROM
-                            users
-                        LEFT JOIN
-                            countries as country ON country.iso3 = users.nationality
-                        LEFT JOIN
-                            companies_departments as department on department.id = users.department
-                        LEFT JOIN
-                            companies as company ON company.id = department.cid
-                        LEFT JOIN
-                            employees_visas as visa ON visa.id = users.visa
+                                (
+                                    CASE
+                                    WHEN employee.passport IS NULL THEN 'I'
+                                    WHEN employee.passport_expire IS NULL THEN 'I'
+                                    WHEN employee.cpr IS NULL THEN 'I'
+                                    WHEN employee.cpr_expire IS NULL THEN 'I'
+                                    WHEN department.cid IS NULL THEN 'I'
+                                    WHEN position.vid IS NULL AND employee.nationality <> 'BAHRAIN' THEN 'I'
+                                    WHEN position.visa_expire IS NULL AND employee.nationality <> 'BAHRAIN' THEN 'I'
+                                    ELSE 'C'
+                                    END
+                                ) as incomplete
+
+                            FROM
+                                users AS employee
+                            LEFT JOIN
+                                countries AS country ON country.iso3 = employee.nationality
+                            LEFT JOIN
+                                employees_uppraisals AS position ON position.eid = employee.id
+                            LEFT JOIN
+                                companies_departments AS department ON department.id = position.did
+                            LEFT JOIN
+                                companies AS company ON company.id = department.cid
+                            LEFT JOIN
+                                companies AS visa ON visa.id = position.vid
                         ");
 
 //--------------------------------------------------------------------
