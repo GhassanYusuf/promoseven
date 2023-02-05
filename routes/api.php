@@ -135,16 +135,16 @@
     //-------------------------------------------------------------------------
 
         // Fixed Function : All Employees
-        Route::get('employees/all', [UserController::class, 'index']);                                                              //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/all', [UserController::class, 'index']);
 
         // Fixed Function : Search
-        Route::get('employees/search/{info}', [UserController::class, 'search']);                                                  //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/search/{info}', [UserController::class, 'search']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/ex/all', [UserController::class, 'ex']);                                                              //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/ex/all', [UserController::class, 'ex']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/ex/search/{input}', [UserController::class, 'search_ex']);                                            //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/ex/search/{input}', [UserController::class, 'search_ex']);
 
         // Fixed Function : Get All Passport Transactions
         Route::get('employees/passport/all', [PassportsController::class, 'index']);
@@ -153,58 +153,58 @@
         Route::post('employees/passport/add', [PassportsController::class, 'store']);
 
         // Fixed Function : Employees Passports In Deposits
-        Route::get('employees/passport/deposit/all', [UserController::class, 'deposits']);                                          //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/passport/deposit/all', [UserController::class, 'deposits']);
 
         // Fixed Function : Show Single Employees Passport Transactions 
         Route::get('employees/passport/transactions/{id}', [PassportsController::class, 'show']);
 
         // Fixed Function : Employees Passports In Deposits
-        Route::get('employees/passport/deposit/search/{input}', [UserController::class, 'search_deposits']);                        //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/passport/deposit/search/{input}', [UserController::class, 'search_deposits']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/male/all', [UserController::class, 'males']);                                                         //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/male/all', [UserController::class, 'males']);
 
         // Fixed Function : Get All Male Employees
-        Route::get('employees/male/search/{input}', [UserController::class, 'search_male']);                                        //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/male/search/{input}', [UserController::class, 'search_male']);
 
         // Fixed Function : Get All Female Employees
-        Route::get('employees/female/all', [UserController::class, 'females']);                                                     //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/female/all', [UserController::class, 'females']);
 
         // Fixed Function : Get All Female Employees
-        Route::get('employees/female/search/{input}', [UserController::class, 'search_female']);                                    //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/female/search/{input}', [UserController::class, 'search_female']);
 
         // Fixed Function : Get All Native Employees
-        Route::get('employees/native/all', [UserController::class, 'native']);                                                      //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/native/all', [UserController::class, 'native']);
 
         // Fixed Function : Get All Native Employees
-        Route::get('employees/native/search/{input}', [UserController::class, 'search_native']);                                    //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/native/search/{input}', [UserController::class, 'search_native']);
 
         // Fixed Function : Get All Expatriates Employees
-        Route::get('employees/expatriate/all', [UserController::class, 'expatriate']);                                              //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/expatriate/all', [UserController::class, 'expatriate']);
 
         // Fixed Function : Get All Expatriates Employees
-        Route::get('employees/expatriate/search/{input}', [UserController::class, 'search_expatriate']);                            //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/expatriate/search/{input}', [UserController::class, 'search_expatriate']);
 
         // Fixed Function : Employees Expiries
-        Route::get('employees/expire/all', [UserController::class, 'expiries']);                                                    //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/expire/all', [UserController::class, 'expiries']);                                                    //Unknown column 'employee.visa_expire'
 
         // Fixed Function : Employees Expiries
-        Route::get('employees/expire/search/{input}', [UserController::class, 'search_expire']);                                    //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/expire/search/{input}', [UserController::class, 'search_expire']);                                    //Unknown column 'employee.visa_expire'
 
         // Fixed Function : Employees With Incomplete Profiles
-        Route::get('employees/incomplete/all', [UserController::class, 'incomplete']);                                              //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/incomplete/all', [UserController::class, 'incomplete']);                                              //Unknown column 'company'
 
         // Fixed Function : Employees With Incomplete Profiles
-        Route::get('employees/incomplete/search/{input}', [UserController::class, 'search_incomplete']);                            //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/incomplete/search/{input}', [UserController::class, 'search_incomplete']);                            //Unknown column 'company'
 
         // Get Employee Uppraisals
         Route::get('employees/uppraisals/{eid}', [UserController::class, 'getEmployeeUppraisals']);
 
         // Fixed Function : Employees With Incomplete Profiles
-        Route::get('employees/email/search/{input}', [UserController::class, 'search_email']);                                      //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/email/search/{input}', [UserController::class, 'search_email']);
 
         // Create A New Employee
-        Route::post('employees/add', [UserController::class, 'store']);                                                             //UNKNOWN COLUMN 'POSITION'
+        Route::post('employees/add', [UserController::class, 'store']);                                                             //Unknown column 'position' in 'field list'
 
         // Update An Employee By ID
         Route::put('employees/update/{id}', [UserController::class, 'update']);
@@ -213,7 +213,7 @@
         Route::delete('employees/delete/{id}', [UserController::class, 'destroy']);
 
         // Returns Employee By ID
-        Route::get('employees/id/{id}', [UserController::class, 'show']);                                                           //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/id/{id}', [UserController::class, 'show']);
 
         // Profile Picture Upload
         Route::post('employees/picture/upload/{cpr}', [UserController::class, 'pictureUpload']);
@@ -234,13 +234,13 @@
         Route::delete('employees/files/delete/{id}', [UserController::class, 'attachmentDelete']);
 
         // Returns All Employees By Name Referance
-        Route::get('employees/name/{name}', [UserController::class, 'search_name']);                                                //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/name/{name}', [UserController::class, 'search_name']);
 
         // Returns All Employees By Name Referance
-        Route::get('employees/cpr/{cpr}', [UserController::class, 'search_cpr']);                                                   //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/cpr/{cpr}', [UserController::class, 'search_cpr']);
 
         // Returns All Employees By Company Referance
-        Route::get('employees/company/{company}', [UserController::class, 'search_company']);                                       //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/company/{company}', [UserController::class, 'search_company']);
 
         // DropDown List : Get ID And Name Of the Employees Of A Company -> By Company ID
         Route::get('employees/company/get/{cid}', [UserController::class, 'getCompanyEmployees']);
@@ -249,7 +249,7 @@
         Route::get('employees/department/get/{did}', [UserController::class, 'getDepartmentEmployees']);
 
         // Returns All Employees By Visa Referance
-        Route::get('employees/visa/{visa}', [UserController::class, 'search_visa']);                                                //UNKNOWN COLUMN 'POSITION'
+        Route::get('employees/visa/{visa}', [UserController::class, 'search_visa']);
 
     //-------------------------------------------------------------------------
     //  Statistics Routes

@@ -145,7 +145,7 @@ class UserController extends Controller
     public function index() {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.end_date IS NULL ORDER BY users.name ASC");
+        $query = $this->emp . (" WHERE employee.end_date IS NULL ORDER BY employee.name ASC");
 
         // Executing The Query
         $results = DB::select($query);
@@ -171,7 +171,7 @@ class UserController extends Controller
     public function ex() {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.end_date IS NOT NULL ORDER BY users.end_date, company.name, users.name, country.name ASC");
+        $query = $this->emp . (" WHERE employee.end_date IS NOT NULL ORDER BY employee.end_date, company.name, employee.name, country.name ASC");
 
         // Executing The Query
         $results = DB::select($query);
@@ -184,7 +184,7 @@ class UserController extends Controller
     public function native() {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.end_date IS NULL AND users.nationality = 'BHR' ORDER BY users.name, company.name, country.name ASC");
+        $query = $this->emp . (" WHERE employee.end_date IS NULL AND employee.nationality = 'BHR' ORDER BY employee.name, company.name, country.name ASC");
 
         // Executing The Query
         $results = DB::select($query);
@@ -197,7 +197,7 @@ class UserController extends Controller
     public function expatriate() {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.end_date IS NULL AND users.nationality <> 'BHR' ORDER BY company.name, users.name, country.name ASC");
+        $query = $this->emp . (" WHERE employee.end_date IS NULL AND employee.nationality <> 'BHR' ORDER BY company.name, employee.name, country.name ASC");
 
         // Executing The Query
         $results = DB::select($query);
@@ -212,17 +212,17 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
                                 WHERE
-                                    users.cpr_expire between CURRENT_DATE() 
+                                    employee.cpr_expire between CURRENT_DATE() 
                                     AND 
                                     DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH) 
                                     OR
-                                    users.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH) 
+                                    employee.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH) 
                                     OR
-                                    users.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
+                                    employee.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
                                     AND 
-                                    users.end_date IS NULL
+                                    employee.end_date IS NULL
                                 ORDER BY
-                                    users.name, company.name, country.name ASC
+                                    employee.name, company.name, country.name ASC
                                 ");
 
         // Executing The Query
@@ -267,9 +267,9 @@ class UserController extends Controller
                         (
                             " . $this->emp . "
                             WHERE
-                                users.nationality <> 'BHR'
+                                employee.nationality <> 'BHR'
                             ORDER BY
-                                users.name, company.name, country.name ASC
+                                employee.name, company.name, country.name ASC
                         ) as users
                     WHERE
                         JSON_EXTRACT(users.passport, '$.state') = 'IN'
@@ -293,11 +293,11 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
                                 WHERE
-                                    users.end_date IS NULL
+                                    employee.end_date IS NULL
                                     AND
-                                    users.gender = 'M'
+                                    employee.gender = 'M'
                                 ORDER BY
-                                    users.name, company.name, country.name ASC
+                                    employee.name, company.name, country.name ASC
                                 ");
 
         // Executing The Query
@@ -318,11 +318,11 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
                                 WHERE
-                                    users.end_date IS NULL
+                                    employee.end_date IS NULL
                                     AND
-                                    users.gender = 'F'
+                                    employee.gender = 'F'
                                 ORDER BY
-                                    users.name, company.name, country.name ASC
+                                    employee.name, company.name, country.name ASC
                                 ");
 
         // Executing The Query
@@ -363,7 +363,7 @@ class UserController extends Controller
     public function show($id) {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.id = ? ");
+        $query = $this->emp . (" WHERE employee.id = ? ");
 
         // Executing The Query
         $results = DB::select($query, [$id]);
@@ -640,19 +640,19 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
             WHERE 
-                users.end_date IS NULL
+                employee.end_date IS NULL
                 AND
                 (
-                users.name like concat('%', '" . $info . "', '%')
+                employee.name like concat('%', '" . $info . "', '%')
                 OR
-                users.cpr like concat('%', '" . $info . "', '%')
+                employee.cpr like concat('%', '" . $info . "', '%')
                 OR
-                users.passport like concat('%', '" . $info . "', '%')
+                employee.passport like concat('%', '" . $info . "', '%')
                 OR
-                users.email like concat('%', '" . $info . "', '%')
+                employee.email like concat('%', '" . $info . "', '%')
                 )
             ORDER BY 
-                users.name, 
+                employee.name, 
                 company.name, 
                 country.name ASC
         ");
@@ -679,18 +679,18 @@ class UserController extends Controller
                 country.iso3 = 'BHR'
                 AND
                 (
-                    users.name like concat('%', '" . $info . "', '%')
+                    employee.name like concat('%', '" . $info . "', '%')
                     OR
-                    users.cpr like concat('%', '" . $info . "', '%')
+                    employee.cpr like concat('%', '" . $info . "', '%')
                     OR
-                    users.passport like concat('%', '" . $info . "', '%')
+                    employee.passport like concat('%', '" . $info . "', '%')
                     OR
-                    users.email like concat('%', '" . $info . "', '%')
+                    employee.email like concat('%', '" . $info . "', '%')
                 )
                 AND
-                users.end_date IS NULL
+                employee.end_date IS NULL
             ORDER BY 
-                users.name, 
+                employee.name, 
                 company.name, 
                 country.name ASC
         ");
@@ -717,18 +717,18 @@ class UserController extends Controller
                 country.iso3 <> 'BHR'
                 AND
                 (
-                    users.name like concat('%', '" . $info . "', '%')
+                    employee.name like concat('%', '" . $info . "', '%')
                     OR
-                    users.cpr like concat('%', '" . $info . "', '%')
+                    employee.cpr like concat('%', '" . $info . "', '%')
                     OR
-                    users.passport like concat('%', '" . $info . "', '%')
+                    employee.passport like concat('%', '" . $info . "', '%')
                     OR
-                    users.email like concat('%', '" . $info . "', '%')
+                    employee.email like concat('%', '" . $info . "', '%')
                 )
                 AND
-                users.end_date IS NULL
+                employee.end_date IS NULL
             ORDER BY 
-                users.name, 
+                employee.name, 
                 company.name, 
                 country.name ASC
         ");
@@ -752,27 +752,27 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
             WHERE
-                users.end_date IS NULL
+                employee.end_date IS NULL
                 AND
                 (
-                    users.name like concat('%', '" . $info . "', '%')
+                    employee.name like concat('%', '" . $info . "', '%')
                     OR
-                    users.cpr like concat('%', '" . $info . "', '%')
+                    employee.cpr like concat('%', '" . $info . "', '%')
                     OR
-                    users.passport like concat('%', '" . $info . "', '%')
+                    employee.passport like concat('%', '" . $info . "', '%')
                     OR
-                    users.email like concat('%', '" . $info . "', '%')
+                    employee.email like concat('%', '" . $info . "', '%')
                 )
                 AND
                 (
-                    users.cpr_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
+                    employee.cpr_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
                     OR
-                    users.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH)
+                    employee.passport_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 6 MONTH)
                     OR
-                    users.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
+                    employee.visa_expire between CURRENT_DATE() AND DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
                 )
             ORDER BY 
-                users.name, 
+                employee.name, 
                 company.name, 
                 country.name ASC
         ");
@@ -840,9 +840,9 @@ class UserController extends Controller
                         (
                             " . $this->emp . "
                             WHERE
-                                users.nationality <> 'BHR'
+                                employee.nationality <> 'BHR'
                             ORDER BY
-                                users.name, company.name, country.name ASC
+                                employee.name, company.name, country.name ASC
                         ) as users
                     WHERE
                         (
@@ -877,25 +877,25 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
                                 WHERE
-                                    users.end_date IS NULL
+                                    employee.end_date IS NULL
                                     AND
                                     (
-                                        users.name like concat('%', '" . $info . "', '%')
+                                        employee.name like concat('%', '" . $info . "', '%')
                                         OR
-                                        users.cpr like concat('%', '" . $info . "', '%')
+                                        employee.cpr like concat('%', '" . $info . "', '%')
                                         OR
-                                        users.passport like concat('%', '" . $info . "', '%')
+                                        employee.passport like concat('%', '" . $info . "', '%')
                                         OR
-                                        users.email like concat('%', '" . $info . "', '%')
+                                        employee.email like concat('%', '" . $info . "', '%')
                                     )
                                     AND
                                     ( 
-                                        users.gender = 'M' 
+                                        employee.gender = 'M' 
                                         OR 
-                                        users.gender = 'MALE'
+                                        employee.gender = 'MALE'
                                     )
                                 ORDER BY
-                                    users.name, company.name, country.name ASC
+                                    employee.name, company.name, country.name ASC
                                 ");
 
         // Executing The Query
@@ -912,25 +912,25 @@ class UserController extends Controller
         // Laravel Raw MySQL Methode
         $query = $this->emp . (" 
                                 WHERE
-                                    users.end_date IS NULL
+                                    employee.end_date IS NULL
                                     AND
                                     (
-                                        users.name like concat('%', '" . $info . "', '%')
+                                        employee.name like concat('%', '" . $info . "', '%')
                                         OR
-                                        users.cpr like concat('%', '" . $info . "', '%')
+                                        employee.cpr like concat('%', '" . $info . "', '%')
                                         OR
-                                        users.passport like concat('%', '" . $info . "', '%')
+                                        employee.passport like concat('%', '" . $info . "', '%')
                                         OR
-                                        users.email like concat('%', '" . $info . "', '%')
+                                        employee.email like concat('%', '" . $info . "', '%')
                                     )
                                     AND
                                     ( 
-                                        users.gender = 'F' 
+                                        employee.gender = 'F' 
                                         OR 
-                                        users.gender = 'FEMALE'
+                                        employee.gender = 'FEMALE'
                                     )
                                 ORDER BY
-                                    users.name, company.name, country.name ASC
+                                    employee.name, company.name, country.name ASC
                                 ");
 
         // Executing The Query
@@ -948,18 +948,18 @@ class UserController extends Controller
         $query = $this->emp . (" 
             WHERE
                 (
-                    users.name like concat('%', '" . $info . "', '%')
+                    employee.name like concat('%', '" . $info . "', '%')
                     OR
-                    users.cpr like concat('%', '" . $info . "', '%')
+                    employee.cpr like concat('%', '" . $info . "', '%')
                     OR
-                    users.passport like concat('%', '" . $info . "', '%')
+                    employee.passport like concat('%', '" . $info . "', '%')
                     OR
-                    users.email like concat('%', '" . $info . "', '%')
+                    employee.email like concat('%', '" . $info . "', '%')
                 )
                 AND
-                users.end_date IS NOT NULL
+                employee.end_date IS NOT NULL
             ORDER BY 
-                users.name, 
+                employee.name, 
                 company.name, 
                 country.name ASC
         ");
@@ -985,7 +985,7 @@ class UserController extends Controller
     public function search_name($name) {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.name like concat('%', ?, '%') ORDER BY users.name, company.name, country.name ASC");
+        $query = $this->emp . (" WHERE employee.name like concat('%', ?, '%') ORDER BY employee.name, company.name, country.name ASC");
 
         // Executing The Query
         $results = DB::select($query, [$name]);
@@ -1004,7 +1004,7 @@ class UserController extends Controller
     public function search_email($email) {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.email = ?");
+        $query = $this->emp . (" WHERE employee.email = ?");
 
         // Executing The Query
         $results = DB::select($query, [$email]);
@@ -1023,7 +1023,7 @@ class UserController extends Controller
     public function search_cpr($cpr) {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE users.cpr LIKE concat('%', ?, '%') ORDER BY users.name ASC");
+        $query = $this->emp . (" WHERE employee.cpr LIKE concat('%', ?, '%') ORDER BY employee.name ASC");
 
         // Executing The Query
         $results = DB::select($query, [$cpr]);
@@ -1061,7 +1061,7 @@ class UserController extends Controller
     public function search_company($company) {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE company.name like concat('%', ?, '%') ORDER BY company.name, users.name, country.name ASC");
+        $query = $this->emp . (" WHERE company.name like concat('%', ?, '%') ORDER BY company.name, employee.name, country.name ASC");
 
         // Executing The Query
         $results = DB::select($query, [$company]);
@@ -1220,7 +1220,7 @@ class UserController extends Controller
     public function search_visa($visa) {
 
         // Laravel Raw MySQL Methode
-        $query = $this->emp . (" WHERE visa.name like concat('%', ?, '%') ORDER BY users.name, company.name, country.name ASC");
+        $query = $this->emp . (" WHERE visa.name like concat('%', ?, '%') ORDER BY employee.name, company.name, country.name ASC");
 
         // Executing The Query
         $results = DB::select($query, [$visa]);
