@@ -277,7 +277,7 @@
         Route::get('statistics/gender', [ReportsController::class, 'gender']);
 
         // Fixed Function : Get Company Employees Percentage
-        Route::get('statistics/company', [ReportsController::class, 'company']);                                                    //Unknown column 'employee.department'
+        Route::get('statistics/company', [ReportsController::class, 'company']);
 
         // Fixed Function : Get Company Employees Percentage
         Route::get('statistics/visa', [ReportsController::class, 'visa']);                                                          //Unknown column 'users.visa'
