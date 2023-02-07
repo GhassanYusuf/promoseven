@@ -106,13 +106,13 @@ class ReportsController extends Controller
         
         // Lite Query That Gets Only The Numbers Requires
         $query = ("
-                    SELECT 
+                    SELECT
                         employee.id as 'id',
                         employee.cpr as 'cpr',
                         employee.picture as 'picture',
                         employee.name as 'name',
                         employee.gender as 'gender',
-                        UPPER(employee.position) as 'position',
+                        UPPER(position.position) as 'position',
                         company.name as 'company',
                         department.name as 'department',
                         employees_leaves.return_date as 'return',
@@ -122,11 +122,13 @@ class ReportsController extends Controller
                             'd', if(employee.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, employee.end_date) % 30.4375))))
                         ) as 'experiance'
                     FROM 
-                        employees_leaves 
+                        employees_leaves
                     LEFT JOIN 
                         users as employee ON employee.id = employees_leaves.eid
                     LEFT JOIN
-                        companies_departments AS department ON department.id = employee.department
+                        employees_uppraisals AS position ON position.eid = employee.id
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = position.did
                     LEFT JOIN 
                         companies as company ON department.cid = company.id
                     WHERE 
@@ -152,32 +154,34 @@ class ReportsController extends Controller
         // Lite Query That Gets Only The Numbers Requires
         $query = ("
                     SELECT 
-                        users.id as 'id',
-                        users.cpr as 'cpr',
-                        users.picture as 'picture',
-                        users.name as 'name',
-                        users.position as 'position',
-                        users.gender as 'gender',
-                        users.join_date as 'join',
+                        employee.id as 'id',
+                        employee.cpr as 'cpr',
+                        employee.picture as 'picture',
+                        employee.name as 'name',
+                        position.position as 'position',
+                        employee.gender as 'gender',
+                        employee.join_date as 'join',
                         company.name as 'company',
                         department.name as 'department',
                         JSON_OBJECT(
-                            'y', if(users.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, users.join_date, now()))), UPPER(CONCAT( timestampdiff(year, users.join_date, users.end_date)))),
-                            'm', if(users.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, users.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, users.join_date, users.end_date) % 12))),
-                            'd', if(users.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, users.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, users.join_date, users.end_date) % 30.4375))))
+                            'y', if(employee.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, employee.join_date, now()))), UPPER(CONCAT( timestampdiff(year, employee.join_date, employee.end_date)))),
+                            'm', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, employee.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, employee.join_date, employee.end_date) % 12))),
+                            'd', if(employee.end_date IS NULL, UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, now()) % 30.4375))), UPPER(CONCAT(floor(timestampdiff(day, employee.join_date, employee.end_date) % 30.4375))))
                         ) as 'experiance'
                     FROM 
-                        users
+                        users AS employee
                     LEFT JOIN
-                        companies_departments AS department ON users.department = department.id
+                        employees_uppraisals AS position ON employee.id = position.eid
+                    LEFT JOIN
+                        companies_departments AS department ON position.did = department.id
                     LEFT JOIN
                         companies AS company ON company.id = department.cid
                     WHERE 
-                        MONTH(join_date) = MONTH(CURDATE()) 
+                        MONTH(employee.join_date) = MONTH(CURDATE()) 
                         AND 
-                        YEAR(join_date) != YEAR(CURDATE()) 
+                        YEAR(employee.join_date) != YEAR(CURDATE()) 
                         AND 
-                        end_date IS NULL;
+                        employee.end_date IS NULL;
         ");
 
         // Executing The Query
@@ -205,7 +209,7 @@ class ReportsController extends Controller
                         employee.name as 'name',
                         employee.gender as 'gender',
                         employee.join_date as 'join',
-                        UPPER(employee.position) as 'position',
+                        UPPER(position.position) as 'position',
                         company.name as 'company',
                         department.name as 'department',
                         JSON_OBJECT(
@@ -215,8 +219,10 @@ class ReportsController extends Controller
                         ) as 'experiance'
                     FROM 
                         users AS employee
+					LEFT JOIN
+						employees_uppraisals AS position ON position.eid = employee.id
                     LEFT JOIN
-                        companies_departments AS department ON department.id = employee.department
+                        companies_departments AS department ON department.id = position.did
                     LEFT JOIN
                         companies AS company ON company.id = department.cid
                     WHERE 
@@ -253,7 +259,7 @@ class ReportsController extends Controller
                         employee.gender as 'gender',
                         ROUND(DATEDIFF(CURRENT_DATE, STR_TO_DATE(employee.birthdate, '%Y-%m-%d'))/365, 0) AS 'age',
                         employee.birthdate as 'birthday',
-                        UPPER(employee.position) as 'position',
+                        UPPER(position.position) as 'position',
                         company.name as 'company',
                         department.name as 'department',
                         JSON_OBJECT(
@@ -264,13 +270,15 @@ class ReportsController extends Controller
                     FROM 
                         users AS employee
                     LEFT JOIN
-                        companies_departments AS department ON department.id = employee.department
+						employees_uppraisals AS position ON position.eid = employee.id
+                    LEFT JOIN
+                        companies_departments AS department ON department.id = position.did
                     LEFT JOIN
                         companies AS company ON company.id = department.cid
                     WHERE 
-                        MONTH(birthdate) = MONTH(CURDATE()) 
+                        MONTH(employee.birthdate) = MONTH(CURDATE()) 
                         AND 
-                        end_date IS NULL
+                        employee.end_date IS NULL
         ");
 
         // Executing The Query
@@ -297,8 +305,10 @@ class ReportsController extends Controller
                         ROUND((count(*)/(select count(*) from users)) * 100, 1) as 'percentage'
                     FROM
                         users AS employee
+					LEFT JOIN
+						employees_uppraisals AS position ON position.eid = employee.id
                     LEFT JOIN
-                        companies_departments AS department ON department.id = employee.department
+                        companies_departments AS department ON department.id = position.did
                     LEFT JOIN
                         companies AS company ON department.cid = company.id
                     WHERE

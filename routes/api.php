@@ -256,19 +256,19 @@
     //-------------------------------------------------------------------------
 
         // Fixed Function : Get Employees Nationality Count & Percentages
-        Route::get('statistics/boxes', [ReportsController::class, 'boxes']);                                                        //UNKNOWN COLUMN 'USERS.VISA_EXPIRE'
+        Route::get('statistics/boxes', [ReportsController::class, 'boxes']);
 
         // Fixed Function : Get Onleave People Lite Information
-        Route::get('statistics/onleave', [ReportsController::class, 'OnLeaveLite']);                                                //Unknown column 'employee.position'
+        Route::get('statistics/onleave', [ReportsController::class, 'OnLeaveLite']);
 
         // Fixed Function : Get Anniversary People Lite Information
-        Route::get('statistics/anniversary', [ReportsController::class, 'AnniversaryLite']);                                        //Unknown column 'users.position'
+        Route::get('statistics/anniversary', [ReportsController::class, 'AnniversaryLite']);
 
         // Fixed Function : Get Probation People Lite Information
-        Route::get('statistics/probation', [ReportsController::class, 'ProbationLite']);                                            //Unknown column 'employee.position'
+        Route::get('statistics/probation', [ReportsController::class, 'ProbationLite']);
 
         // Fixed Function : Get Probation People Lite Information
-        Route::get('statistics/birthday', [ReportsController::class, 'BirthdayLite']);                                              //Unknown column 'employee.position'
+        Route::get('statistics/birthday', [ReportsController::class, 'BirthdayLite']);
 
         // Fixed Function : Get Employees Nationality Count & Percentages
         Route::get('statistics/nationality', [ReportsController::class, 'country']);
@@ -283,7 +283,7 @@
         Route::get('statistics/visa', [ReportsController::class, 'visa']);                                                          //Unknown column 'users.visa'
 
         // Fixed Function : Deposit Count
-        Route::get('statistics/passport', [ReportsController::class, 'passport']);                                                  // done - Unknown column 'employees_passport_transactions.type'
+        Route::get('statistics/passport', [ReportsController::class, 'passport']);
 
     //-------------------------------------------------------------------------
     //  Notes Routes
