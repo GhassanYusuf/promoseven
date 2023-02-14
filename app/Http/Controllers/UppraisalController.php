@@ -142,16 +142,15 @@ class UppraisalController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function update(Request $request, $id) {
+     public function update(Request $request, $id) {
 
-        // Find the Record By The ID
-        $uppraisal = employees_uppraisal::find($id);
+        // Finding User Via ID
+        $position = employees_uppraisal::find($id);
 
-        // Executing The Query
-        $uppraisal->update($uppraisal->all());
+        // Updating Data To the User From The $request Object
+        $position->update($request->all());
         
-        // Return The Result
-        return $uppraisal;
+        return $position;
 
     }
 
