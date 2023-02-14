@@ -308,25 +308,6 @@
         Route::put('notes/update/{id}', [NotesController::class, 'update']);
 
     //-------------------------------------------------------------------------
-    //  Visas Routes
-    //-------------------------------------------------------------------------
-
-        // Fixed Function : Get A Specific Employee Notes
-        Route::get('visas/all', [VisasController::class, 'index']);                                                                 //No such file or directory
-    
-        // Fixed Function : Get A Note By Its ID
-        Route::get('visas/id/{id}', [VisasController::class, 'show']);
-
-        // Fixed Function : Add Notes To Employees
-        Route::post('visas/add', [VisasController::class, 'store']);
-
-        // Fixed Function : Get Employees Nationality Count & Percentages
-        Route::put('visas/update/{id}', [VisasController::class, 'update']);
-
-        // Fixed Function : Delete A Note By Its ID
-        Route::delete('visas/delete/{id}', [VisasController::class, 'destroy'])->name('delete.note');
-
-    //-------------------------------------------------------------------------
     //  Companies Routes
     //-------------------------------------------------------------------------
 
@@ -368,7 +349,7 @@
         Route::get('departments/employees/{id}', [UserController::class, 'mgIndex']);                                                 //Unknown column 'position'
 
         // Fixed Function : Batch Move Empolyees To Other Department
-        Route::get('departments/employees/move/{old}/{new}', [CompaniesDepartments::class, 'batchMoveToNewDepartment']);
+        Route::get('departments/employees/move/{old}/{new}', [CompaniesDepartments::class, 'batchMoveToNewDepartment']);             // Unknown column 'employee.department'
 
         // Fixed Function : Get A Note By Its ID
         Route::get('departments/id/{id}', [CompaniesDepartments::class, 'show']);

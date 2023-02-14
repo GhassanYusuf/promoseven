@@ -55,11 +55,11 @@ class UppraisalController extends Controller
                                 UPPER(department.name) AS 'department',
                                 UPPER(uppraisal.position) AS 'position',
                                 UPPER(if(employee.nationality = 'BHR', 'NONE', visa.name)) AS 'visa',
-                                UPPER(uppraisal.effective) AS 'effective',
+                                UPPER(uppraisal.start_date) AS 'start_date',
                                 UPPER(ROUND(uppraisal.salary, 0)) AS 'salary',
-                                UPPER(ROUND((uppraisal.salary - LAG(uppraisal.salary, 1) OVER (ORDER BY uppraisal.effective ASC)), 0)) AS 'increment',
-                                UPPER(TIMESTAMPDIFF(MONTH, uppraisal.effective, LEAD(uppraisal.effective, 1) OVER (ORDER BY uppraisal.effective ASC))) as 'months',
-                                UPPER(ROUND(TIMESTAMPDIFF(MONTH, uppraisal.effective, LEAD(uppraisal.effective, 1) OVER (ORDER BY uppraisal.effective ASC)) * uppraisal.salary, 0)) AS 'earning',
+                                UPPER(ROUND((uppraisal.salary - LAG(uppraisal.salary, 1) OVER (ORDER BY uppraisal.start_date ASC)), 0)) AS 'increment',
+                                UPPER(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC))) as 'months',
+                                UPPER(ROUND(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)) * uppraisal.salary, 0)) AS 'earning',
                                 UPPER(enroller.name) AS 'enroller'
                             FROM 
                                 users AS employee
@@ -163,6 +163,32 @@ class UppraisalController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function current($eid) {
+
+        // Modifying the Query
+        $query = $this->uppraisal2 . ("
+                                WHERE
+                                    employee.id = ?
+                                ORDER BY
+                                    uppraisal.start_date DESC
+                                LIMIT 1
+                            ");
+
+        // Executing The Query
+        $result = DB::select($query, [$eid]);
+
+        // Return The Result
+        return $result;
+
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -182,6 +208,14 @@ class UppraisalController extends Controller
         return $uppraisal;
 
     }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
 
     public function migrate() {
 
