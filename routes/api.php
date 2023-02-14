@@ -259,16 +259,16 @@ use App\Http\Controllers\UppraisalController;
         // Returns All Appraisals Of A Selected Employee (Employment History)
         Route::get('uppraisals/employee/{id}', [UppraisalController::class, 'show']);
 
-        // Returns All Employees By Company Referance
+        // Gets Employee Current Position
         Route::get('uppraisals/employee/current/{id}', [UppraisalController::class, 'current']);
 
-        // Returns All Employees By Company Referance
+        // Creates Employee New Position
         Route::post('uppraisals/employee/new', [UppraisalController::class, 'store']);
 
-        // DropDown List : Get ID And Name Of the Employees Of A Company -> By Company ID
+        // Updates The Position Infor Of The Employee Based On The Uppraisal ID
         Route::put('uppraisals/employee/update/{id}', [UppraisalController::class, 'update']);
 
-        // DropDown List : Get ID And Name Of the Employees Of A Department -> By Department ID
+        // Deletes The Position Of The Person
         Route::delete('uppraisals/employee/delete/{id}', [UppraisalController::class, 'destroy']);
 
     //-------------------------------------------------------------------------
