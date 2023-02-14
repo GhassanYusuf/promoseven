@@ -12,67 +12,36 @@ class UppraisalController extends Controller
 {
 
     private $uppraisal = ("
-    
-                        SELECT
-                            position.id as 'id',
-                            UPPER(employee.id) AS 'eid',
-                            UPPER(employee.name) AS 'name',
-                            UPPER(position.position) AS 'position',
-                            UPPER(department.name) AS 'department',
-                            UPPER(company.name) AS 'company',
-                            UPPER(visa.name) AS 'visa',
-                            UPPER(position.salary) AS 'salary',
-                            (position.salary - LAG(position.salary, 1) OVER ( ORDER BY position.created_at ASC ) ) as 'difference',
-                            ROUND(((position.salary - LAG(position.salary, 1) OVER ( ORDER BY position.created_at ASC ) ) / LAG(position.salary, 1) OVER ( ORDER BY position.created_at ASC )), 1) * 100 as 'percent',
-                            UPPER(position.allowances) AS 'allowances',
-                            UPPER(position.duties) AS 'duties',
-                            UPPER(position.documents) AS 'documents',
-                            UPPER(position.effective) AS 'effective',
-                            UPPER(position.created_at) AS 'created_at'
-                        FROM 
-                            users AS employee
-                        LEFT JOIN
-                            employees_uppraisals AS position ON position.eid = employee.id
-                        LEFT JOIN
-                            companies_departments AS department ON department.id = position.did
-                        LEFT JOIN
-                            employees_visas AS visa ON visa.id = position.vid
-                        LEFT JOIN
-                            companies AS company ON company.id = department.cid
-
-                    ");
-
-    private $uppraisal2 = ("
                             SELECT 
-                                uppraisal.id AS 'id',
+                            position.id AS 'id',
                                 employee.id AS 'eid',
                                 company.id AS 'cid',
-                                uppraisal.did AS 'did',
+                                position.did AS 'did',
                                 visa.id AS 'vid',
                                 enroller.id AS 'enrid',
                                 UPPER(employee.name) AS 'name',
                                 UPPER(company.name) AS 'company',
                                 UPPER(department.name) AS 'department',
-                                UPPER(uppraisal.position) AS 'position',
+                                UPPER(position.position) AS 'position',
                                 UPPER(if(employee.nationality = 'BHR', 'NONE', visa.name)) AS 'visa',
-                                UPPER(uppraisal.start_date) AS 'start_date',
-                                UPPER(ROUND(uppraisal.salary, 0)) AS 'salary',
-                                UPPER(ROUND((uppraisal.salary - LAG(uppraisal.salary, 1) OVER (ORDER BY uppraisal.start_date ASC)), 0)) AS 'increment',
-                                UPPER(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC))) as 'months',
-                                UPPER(ROUND(TIMESTAMPDIFF(MONTH, uppraisal.start_date, LEAD(uppraisal.start_date, 1) OVER (ORDER BY uppraisal.start_date ASC)) * uppraisal.salary, 0)) AS 'earning',
+                                UPPER(position.start_date) AS 'start_date',
+                                UPPER(ROUND(position.salary, 0)) AS 'salary',
+                                UPPER(ROUND((position.salary - LAG(position.salary, 1) OVER (ORDER BY position.start_date ASC)), 0)) AS 'increment',
+                                UPPER(TIMESTAMPDIFF(MONTH, position.start_date, LEAD(position.start_date, 1) OVER (ORDER BY position.start_date ASC))) as 'months',
+                                UPPER(ROUND(TIMESTAMPDIFF(MONTH, position.start_date, LEAD(position.start_date, 1) OVER (ORDER BY position.start_date ASC)) * position.salary, 0)) AS 'earning',
                                 UPPER(enroller.name) AS 'enroller'
                             FROM 
                                 users AS employee
                             LEFT JOIN
-                                employees_uppraisals AS uppraisal ON uppraisal.eid = employee.id
+                                employees_uppraisals AS position ON position.eid = employee.id
                             LEFT JOIN
-                                companies_departments AS department ON department.id = uppraisal.did
+                                companies_departments AS department ON department.id = position.did
                             LEFT JOIN
                                 companies AS company ON company.id = department.cid
                             LEFT JOIN
-                                employees_visas AS visa ON visa.id = uppraisal.vid
+                                companies AS visa ON visa.id = position.vid
                             LEFT JOIN
-                                users AS enroller ON enroller.id = uppraisal.doneBy
+                                users AS enroller ON enroller.id = position.doneBy
                         ");
 
     /**
@@ -84,32 +53,9 @@ class UppraisalController extends Controller
     public function index() {
         
         // Modifying the Query
-        $query = ("
-
-                    SELECT
-                        position.id as 'id',
-                        UPPER(employee.id) AS 'eid',
-                        UPPER(employee.name) AS 'name',
-                        UPPER(position.position) AS 'position',
-                        UPPER(department.name) AS 'department',
-                        UPPER(company.name) AS 'company',
-                        UPPER(visa.name) AS 'visa',
-                        UPPER(position.salary) AS 'salary',
-                        UPPER(position.allowances) AS 'allowances',
-                        UPPER(position.duties) AS 'duties',
-                        UPPER(position.documents) AS 'documents',
-                        UPPER(position.effective) AS 'effective',
-                        UPPER(position.created_at) AS 'created_at'
-                    FROM 
-                        users AS employee
-                    LEFT JOIN
-                        employees_uppraisals AS position ON position.eid = employee.id
-                    LEFT JOIN
-                        companies_departments AS department ON department.id = position.did
-                    LEFT JOIN
-                        employees_visas AS visa ON visa.id = position.vid
-                    LEFT JOIN
-                        companies AS company ON company.id = department.cid
+        $query = $this->uppraisal . ("
+                    WHERE
+                        employee.id = ?
                     ORDER BY
                         position.created_at DESC,
                         employee.name ASC
@@ -144,18 +90,18 @@ class UppraisalController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function show($eid) {
+    public function show($id) {
 
         // Modifying the Query
-        $query = $this->uppraisal2 . ("
+        $query = $this->uppraisal . ("
                                 WHERE
                                     employee.id = ?
                                 ORDER BY
-                                    uppraisal.created_at DESC
+                                    position.start_date DESC
                             ");
 
         // Executing The Query
-        $result = DB::select($query, [$eid]);
+        $result = DB::select($query, [$id]);
 
         // Return The Result
         return $result;
@@ -169,19 +115,19 @@ class UppraisalController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function current($eid) {
+    public function current($id) {
 
         // Modifying the Query
-        $query = $this->uppraisal2 . ("
+        $query = $this->uppraisal . ("
                                 WHERE
                                     employee.id = ?
                                 ORDER BY
-                                    uppraisal.start_date DESC
+                                    position.start_date DESC
                                 LIMIT 1
                             ");
 
         // Executing The Query
-        $result = DB::select($query, [$eid]);
+        $result = DB::select($query, [$id]);
 
         // Return The Result
         return $result;

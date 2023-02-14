@@ -42,6 +42,7 @@
 
     // Sanctum Companies Controller
     use App\Http\Controllers\CountriesController;
+use App\Http\Controllers\UppraisalController;
 
 //=========================================================================
 //  Public Routes
@@ -250,6 +251,25 @@
 
         // Returns All Employees By Visa Referance
         Route::get('employees/visa/{visa}', [UserController::class, 'search_visa']);
+
+    //-------------------------------------------------------------------------
+    //  Uppraisals
+    //-------------------------------------------------------------------------
+
+        // Returns All Appraisals Of A Selected Employee (Employment History)
+        Route::get('uppraisals/employee/{id}', [UppraisalController::class, 'show']);
+
+        // Returns All Employees By Company Referance
+        Route::get('uppraisals/employee/current/{id}', [UppraisalController::class, 'current']);
+
+        // Returns All Employees By Company Referance
+        Route::post('uppraisals/employee/new', [UppraisalController::class, 'store']);
+
+        // DropDown List : Get ID And Name Of the Employees Of A Company -> By Company ID
+        Route::put('uppraisals/employee/update/{id}', [UppraisalController::class, 'update']);
+
+        // DropDown List : Get ID And Name Of the Employees Of A Department -> By Department ID
+        Route::delete('uppraisals/employee/delete/{id}', [UppraisalController::class, 'destroy']);
 
     //-------------------------------------------------------------------------
     //  Statistics Routes
