@@ -7,6 +7,7 @@ use App\Models\attachments;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use stdClass;
 
@@ -675,6 +676,21 @@ class UserController extends Controller
             return response()->json(['error'=>0, 'msg'=>'No Record Of The File Found']);
         }
 
+    }
+
+    // Delete Attahcments THat Have No Link To Database
+    public function deleteUnlistedFiles() {
+
+        $files = Storage::allFiles('/directory/name');
+
+        $dbFiles = DB::table('table_name')->pluck('filename');
+
+        $deletedFiles = array_diff($files, $dbFiles);
+
+        foreach($deletedFiles as $file) {
+            Storage::delete($file);
+        }
+        
     }
 
 //--------------------------------------------------------------------
