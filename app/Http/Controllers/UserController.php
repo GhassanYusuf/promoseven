@@ -397,28 +397,71 @@ class UserController extends Controller
     }
 
     // Get File Version Of The Same File
-    public function attachmentVersions($title, $cpr) {
+    public function attachmentVersions($cpr) {
 
         // Laravel Raw MySQL Methode
         $query = ("
-                    SELECT 
-                        * 
+                    SELECT
+                        distinct
+                        title
                     FROM 
-                        employees_attachments as attachment
-                    WHERE
-                        attachment.title = ?
-                        AND
-                        attachment.cpr = ?
-                    ORDER BY
-                        attachment.created_at
-                        DESC
+                        employees_attachments 
+                    WHERE 
+                        cpr = ?
+                    ORDER BY 
+                        title ASC;
                 ");
 
         // Executing The Query
-        $results = DB::select($query, [$title, $cpr]);
+        $file_types = DB::select($query, [$cpr]);
 
-        // Return The Results
-        return $results;
+        // Databank
+        $newData = array();
+
+        // Looping Through
+        foreach($file_types AS $type) {
+
+            // Here We Get Title Of The File
+            $temp = json_decode(json_encode($type));
+
+            // Preparing A Query Of File Type
+            $query = ("
+                        SELECT 
+                            id,
+                            name,
+                            type,
+                            file,
+                            eid,
+                            cpr,
+                            done_by,
+                            created_at,
+                            updated_at
+                        FROM 
+                            employees_attachments as attachment
+                        WHERE
+                            attachment.title = ?
+                            AND
+                            attachment.cpr = ?
+                        ORDER BY
+                            attachment.created_at
+                            DESC
+                    ");
+
+            // Getting The Files OF Specific Kind
+            $files = DB::select($query, [$temp->title, $cpr]);
+
+            // Prepare Data To Be Sent Out
+            $data = new stdClass();
+            $data->title = $temp->title;
+            $data->files = $files;
+            
+            // Update The Array
+            array_push($newData, $data);
+
+        }
+
+        // Return The Data
+        return $newData;
 
     }
 
@@ -530,6 +573,10 @@ class UserController extends Controller
     // Uploads A File - Working 100%
     public function attachmentUpload(Request $request, $cpr) {
  
+        if(is_null($request->title)) {
+            return response()->json(['error'=>'Title Of Document Not Set'], 401);
+        }
+
         // Laravel Raw MySQL Methode
         $query = ("SELECT * FROM users AS employee WHERE employee.cpr = ?");
         

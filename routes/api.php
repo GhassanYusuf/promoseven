@@ -226,7 +226,7 @@ use App\Http\Controllers\UppraisalController;
         Route::get('employees/files/{cpr}', [UserController::class, 'attachmentAll']);
 
         // Returns Employee Files By CPR
-        Route::get('employees/files/version/{title}/{cpr}', [UserController::class, 'attachmentVersions']);
+        Route::get('employees/files/version/{cpr}', [UserController::class, 'attachmentVersions']);
 
         // Attachment Files Upload
         Route::post('employees/files/upload/{cpr}', [UserController::class, 'attachmentUpload']);
