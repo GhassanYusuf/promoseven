@@ -507,7 +507,7 @@ class UserController extends Controller
             $details->path      = public_path('dist\\employees\\' . $details->folder);
 
             // If The Path Was Not Existing Then Create It
-            File::ensureDirectoryExists($details->folder);
+            File::ensureDirectoryExists($details->path);
             
             // Moving The File To the Folder
             $picture->move($details->path, $details->url);
