@@ -228,6 +228,60 @@ class LeavesController extends Controller
 
     }
 
+     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function leaveStatusLeft() {
+        
+        // Laravel Raw MySQL Methode
+        $query = $this->leavesQuery . ("
+                    WHERE
+                        leaves.status = 'L'
+                        AND
+                        leaves.hApproval = 'A'
+                "); 
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+      /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+
+    public function leaveStatus() {
+        
+        // Laravel Raw MySQL Methode
+        $query = $this->leavesQuery . ("
+                    WHERE
+                        leaves.status = 'L'
+                    OR
+                        leaves.status = 'R'
+                    OR 
+                        leaves.status IS NULL
+                    AND 
+                        leaves.hApproval = 'A'
+                ");
+
+        // Executing The Query
+        $results = DB::select($query);
+
+        // Return The Results
+        return $results;
+
+    }
+
+
+
     /**
      * Store a newly created resource in storage.
      *

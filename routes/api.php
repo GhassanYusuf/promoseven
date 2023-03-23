@@ -82,6 +82,12 @@ use App\Http\Controllers\UppraisalController;
         // Get All Canceled Leaves
         Route::get('leaves/canceled/all', [LeavesController::class, 'canceledReq']);
 
+        // Get All LEFT or Returned
+        Route::get('leaves/status/all', [LeavesController::class, 'leaveStatus']);
+
+         // Get All Leaves Status Null
+        Route::get('leaves/all/statusLeft', [LeavesController::class, 'leaveStatusLeft']);
+
         // Get Leaves Of an Employee By ID
         Route::get('leaves/id/{id}', [LeavesController::class, 'show']);
 
@@ -223,7 +229,7 @@ use App\Http\Controllers\UppraisalController;
         Route::get('employees/picture/remove/{cpr}', [UserController::class, 'pictureRemove']);
 
         // Returns Employee Files By CPR
-        Route::get('employees/files/{cpr}', [UserController::class, 'attachmentAll']);
+        Route::get('employees/files/{cpr}', [UserController::class, 'attachmentAll']);        
 
         // Returns Employee Files By CPR
         Route::get('employees/files/version/{cpr}', [UserController::class, 'attachmentVersions']);
