@@ -574,6 +574,12 @@ class UserController extends Controller
     // Uploads A File - Working 100%
     public function attachmentUpload(Request $request, $cpr) {
  
+        // ERROR : This Is To Make Sure The CPR Is Set
+        if(is_null($cpr)) {
+            return response()->json(['error'=>'CPR Of The Owner Is Not Set'], 401);
+        }
+
+        // ERROR : This Is To Make Sure The Title Is Set
         if(is_null($request->title)) {
             return response()->json(['error'=>'Title Of Document Not Set'], 401);
         }
@@ -584,7 +590,7 @@ class UserController extends Controller
         // Executing The Query
         $employee = json_decode(json_encode(DB::select($query, [$cpr])));
 
-        // Make Sure The Result Is Not 0 Records & Not More Than One Record
+        // ERROR : Make Sure The Result Is Not 0 Records & Not More Than One Record
         if(sizeof($employee) < 1) {
             return response()->json(['error'=>'No Records Found, Or CPR Field Of The Employee Is Not Set'], 401);
         } elseif(sizeof($employee) > 1) {
@@ -599,7 +605,7 @@ class UserController extends Controller
             'file' => 'required|mimes:doc,docx,pdf,txt,csv,xlsx,png,jpg,jpeg,gif|max:2048',
         ]);
 
-        // In Case the Validation Was Not Sucessfull Send Error Response
+        // ERROR : In Case the Validation Was Not Sucessfull Send Error Response
         if($validator->fails()) {          
             return response()->json(['error'=>$validator->errors()], 401);
         }
