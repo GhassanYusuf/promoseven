@@ -480,7 +480,7 @@ class UserController extends Controller
 
         // To Make Sure The Person Have A CPR
         if(is_null($employee->cpr) || empty($employee->cpr)) {
-            return response()->json(['error'=>'employee cpr number is missing, please updare the user profile with same cpr number'], 401);
+            return response()->json(['error'=>'employee cpr number is missing, please update the user profile with same cpr number'], 401);
         }
 
         // Validate The File Type

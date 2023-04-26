@@ -262,6 +262,7 @@ class ReportsController extends Controller
                         UPPER(position.position) as 'position',
                         company.name as 'company',
                         department.name as 'department',
+                        department.mid as 'managerId', 
                         JSON_OBJECT(
                             'y', if(employee.end_date IS NULL, UPPER(CONCAT( timestampdiff(year, employee.join_date, now()))), UPPER(CONCAT( timestampdiff(year, employee.join_date, employee.end_date)))),
                             'm', if(employee.end_date IS NULL, UPPER(CONCAT(timestampdiff (month, employee.join_date, now()) % 12)), UPPER(CONCAT(timestampdiff (month, employee.join_date, employee.end_date) % 12))),
@@ -273,6 +274,8 @@ class ReportsController extends Controller
 						employees_uppraisals AS position ON position.eid = employee.id
                     LEFT JOIN
                         companies_departments AS department ON department.id = position.did
+                    LEFT JOIN
+                        companies_departments AS manager ON manager.id = department.mid
                     LEFT JOIN
                         companies AS company ON company.id = department.cid
                     WHERE 

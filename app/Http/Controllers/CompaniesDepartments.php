@@ -187,7 +187,7 @@ class CompaniesDepartments extends Controller
 
     public function batchMoveToNewDepartment($old, $new) {
 
-        // Bact Move Employees To New Department
+        // Batch Move Employees To New Department
         $query = ("UPDATE users AS employee SET employee.department = ? WHERE employee.department = ?;");
 
         // Result

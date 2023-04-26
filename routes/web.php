@@ -128,7 +128,7 @@ use App\Http\Controllers\PassportsController;
             $leaves     = (new LeavesController)->show($id);
             $notes      = (new NotesController)->show($id);
             $passports  = (new PassportsController)->show($id);
-            $files      = (new AttachmentsController)->show($id);
+            // $files      = (new AttachmentsController)->show($id);
             return view('admin.dashboard.employee.profile', compact('profile', 'leaves', 'notes', 'passports', 'files'));
         })->name('profile');
 

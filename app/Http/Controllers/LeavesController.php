@@ -242,6 +242,8 @@ class LeavesController extends Controller
                         leaves.status = 'L'
                         AND
                         leaves.hApproval = 'A'
+                        AND
+                        leaves.mApproval = 'A'
                 "); 
 
         // Executing The Query
@@ -270,6 +272,8 @@ class LeavesController extends Controller
                         leaves.status IS NULL
                     AND 
                         leaves.hApproval = 'A'
+                    AND 
+                        leaves.mApproval = 'A'
                 ");
 
         // Executing The Query
@@ -293,13 +297,14 @@ class LeavesController extends Controller
 
         // Basic Requirments For Any New Employee
         $request->validate([
+            'eid'               => 'required',
             'type'              => 'required',
             'start_date'        => 'required',
             'return_date'       => 'required',
             'annual_ticket'     => 'required',
         ]);
 
-        // Inser To Datatable
+        // Insert To Datatable
         return employees_leaves::create($request->all());
 
     }
