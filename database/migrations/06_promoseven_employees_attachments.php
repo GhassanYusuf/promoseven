@@ -15,13 +15,19 @@ return new class extends Migration
     public function up() {
 
         Schema::create('employees_attachments', function (Blueprint $table) {
+
+            // Feilds
             $table->id();
-            $table->integer('eid')->nullable();
+            $table->unsignedBigInteger('eid')->nullable();
             $table->string('cpr', 45)->nullable();
             $table->string('title', 45)->nullable();
             $table->json('attachment')->nullable();
             $table->integer('done_by')->nullable();
             $table->timestamps();
+
+            // Forign Key In Users
+            $table->foreign('eid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
 
     }
@@ -35,7 +41,7 @@ return new class extends Migration
     public function down() {
 
         Schema::dropIfExists('employees_attachments');
-        
+
     }
-    
+
 };

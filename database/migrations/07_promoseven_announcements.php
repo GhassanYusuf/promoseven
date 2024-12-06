@@ -11,11 +11,13 @@ return new class extends Migration
      *
      * @return void
      */
-    
+
     public function up() {
 
         if ( !Schema::hasTable('announcements') ) {
+
             Schema::create('announcements', function (Blueprint $table) {
+
                 $table->id();
                 $table->string('title', 50);
                 $table->string('body', 255)->nullable();
@@ -23,7 +25,9 @@ return new class extends Migration
                 $table->date('start_date');
                 $table->date('end_date');
                 $table->timestamps();
+
             });
+
         }
 
     }

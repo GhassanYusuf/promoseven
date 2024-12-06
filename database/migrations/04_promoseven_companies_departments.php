@@ -15,11 +15,18 @@ return new class extends Migration
     {
         Schema::create('companies_departments', function (Blueprint $table) {
             $table->id();
-            $table->integer('cid');                 // Companies ID
-            $table->integer('mid')->nullable();     // Department Manager ID
-            $table->integer('pdid')->nullable();    // Parent Department ID
+            $table->unsignedBigInteger('cid');              // Companies ID
+            $table->unsignedBigInteger('mid')->nullable();  // Department Manager ID
+            $table->integer('pdid')->nullable();            // Parent Department ID
             $table->string('name', 100);            // Title Of the Department
             $table->timestamps();
+
+            // Forign Key In Companies
+            $table->foreign('cid')->references('id')->on('companies')->onUpdate('cascade')->onDelete('cascade');
+
+            // Forign Key In Users
+            $table->foreign('mid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
     }
 

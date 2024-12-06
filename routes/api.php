@@ -42,7 +42,7 @@
 
     // Sanctum Companies Controller
     use App\Http\Controllers\CountriesController;
-use App\Http\Controllers\UppraisalController;
+    use App\Http\Controllers\UppraisalController;
 
 //=========================================================================
 //  Public Routes

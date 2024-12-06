@@ -14,16 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            
+
             $table->id();
             $table->string('name')->nullable();
-            $table->enum('accesslevel', ['A', 'H', 'M', 'S', 'E'])->nullable();   // Admin, HR, Manager, Supervisor, Employee
 
             $table->string('rfid', 10)->unique()->nullable();
-            $table->string('zktid', 10)->unique()->nullable();
             $table->string('code', 10)->unique()->nullable();
 
-            $table->integer('position')->nullable();
             $table->string('contact', 100)->nullable();
             $table->integer('company')->nullable();
 
@@ -33,15 +30,9 @@ return new class extends Migration
             $table->string('passport', 30)->nullable();
             $table->date('passport_expire')->nullable();
 
-            $table->string('visa', 30)->nullable();
-            $table->date('visa_expire')->nullable();
-
-            $table->string('nationality')->nullable();
+            $table->unsignedBigInteger('nationality')->nullable();
             $table->enum('gender', ['M', 'F'])->nullable();
             $table->date('birthdate')->nullable();
-
-            $table->date('join_date')->nullable();
-            $table->date('end_date')->nullable();
 
             $table->string('bank_account', 100)->nullable();
             $table->string('picture', 100)->nullable();
@@ -51,6 +42,10 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            // Forign Key In Nationality
+            $table->foreign('nationality')->references('id')->on('countries')->onUpdate('cascade')->onDelete('cascade');
+
         });
     }
 

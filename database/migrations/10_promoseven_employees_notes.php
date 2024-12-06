@@ -15,12 +15,21 @@ return new class extends Migration
     public function up() {
 
         Schema::create('employees_notes', function (Blueprint $table) {
+
+            // Feild
             $table->id();
-            $table->integer('eid')->nullable();
+            $table->unsignedBigInteger('eid')->nullable();
             $table->string('title', 45)->nullable();
             $table->string('content', 150)->nullable();
-            $table->integer('done_by')->nullable();
+            $table->unsignedBigInteger('done_by')->nullable();
             $table->timestamps();
+
+            // Forign Key In Employee
+            $table->foreign('eid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+            // Forign Key In Action Done By
+            $table->foreign('done_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
 
     }
@@ -34,6 +43,6 @@ return new class extends Migration
     public function down() {
 
         Schema::dropIfExists('employees_notes');
-        
+
     }
 };

@@ -13,15 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('countries', function (Blueprint $table) {
+        Schema::create('attendance', function (Blueprint $table) {
+
+            // Feilds
             $table->id();
-            $table->string('name', 80);
-            $table->string('iso', 2)->unique()->nullable();
-            $table->string('iso3', 3)->unique()->nullable();
-            $table->integer('numcode', 6)->nullable();
-            $table->integer('phonecode', 6)->nullable();
-            $table->string('currency', 6)->nullable();
+            $table->string('rfid', 45);     // RFID Card
             $table->timestamps();
+
+            // Forign Key In RFID
+            $table->foreign('rfid')->references('rfid')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
     }
 
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('countries');
+        Schema::dropIfExists('attendance');
     }
 };

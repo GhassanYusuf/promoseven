@@ -15,12 +15,17 @@ return new class extends Migration
     public function up() {
 
         Schema::create('employees_passport_transactions', function (Blueprint $table) {
+
             $table->id();
-            $table->integer('eid');
+            $table->unsignedBigInteger('eid');
             $table->enum('state', ['IN', 'OUT'])->nullable();
             $table->string('note', 100)->nullable();
             $table->integer('done_by');
             $table->timestamps();
+
+            // Forign Key In RFID
+            $table->foreign('eid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
 
     }
@@ -34,5 +39,5 @@ return new class extends Migration
     public function down() {
         Schema::dropIfExists('employees_passport_transactions');
     }
-    
+
 };
