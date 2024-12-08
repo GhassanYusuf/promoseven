@@ -22,31 +22,21 @@ class UserFactory extends Factory
         $faker = Faker::create();
 
         return [
-            'name' => $faker->name(),
-            'accesslevel' => $faker->randomElement(['A', 'H', 'M', 'S', 'E']),
-            'rfid' => $faker->numerify('##########'),
-            'zktid' => null,
-            'code' => null,
-            'position' => rand(1, 5),
-            'contact' => '+'.str_pad(rand(1000000000, 9999999999), 10, '0', STR_PAD_LEFT),
-            'company' => rand(1, 25),
-            'cpr' => $faker->numerify('##########'),
-            'cpr_expire' => $faker->date(),
-            'passport' => $faker->numerify('##########'),
-            'passport_expire' => $faker->date(),
-            'visa' => null,
-            'visa_expire' => null,
-            'nationality' => rand(1, 239),
-            'gender' => $faker->randomElement(['M', 'F']),
-            'birthdate' => $faker->date(),
-            'join_date' => $faker->date(),
-            'end_date' => null,
-            'bank_account' => $faker->numerify('##########'),
-            'picture' => null,
-            'email' => $faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => bcrypt(Str::random(10)), // Replace with a more secure password hashing method
-            'remember_token' => Str::random(10), // Use Str::random() within the Factory
+            'name' => $this->faker->name(),
+            'rfid' => $this->faker->unique()->regexify('[a-zA-Z0-9]{10}'),
+            'code' => $this->faker->unique()->regexify('[a-zA-Z0-9]{10}'),
+            'contact' => [
+                'phone' => $this->faker->phoneNumber(),
+                'email' => $this->faker->safeEmail(),
+            ],
+            'qualifications' => $this->faker->sentence(),
+            'cpr' => $this->faker->regexify('[0-9]{10}'),
+            'passport' => $this->faker->regexify('[a-zA-Z0-9]{30}'),
+            'nationality' => $this->faker->randomElement(['EG', 'SA', 'US']),
+            'gender' => $this->faker->randomElement(['M', 'F']),
+            'birthdate' => $this->faker->date(),
+            'bank_account' => $this->faker->regexify('[a-zA-Z0-9]{100}'),
+            'picture' => $this->faker->imageUrl(100, 100),
         ];
     }
 

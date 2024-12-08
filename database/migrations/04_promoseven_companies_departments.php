@@ -24,8 +24,11 @@ return new class extends Migration
             // Forign Key In Companies
             $table->foreign('cid')->references('id')->on('companies')->onUpdate('cascade')->onDelete('cascade');
 
-            // Forign Key In Users
+            // Forign Key In Users - Manager
             $table->foreign('mid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+            // Forign Key In Departments - Parant Department
+            // $table->foreign('pdid')->references('id')->on('companies_departments')->onUpdate('cascade')->onDelete('cascade');
 
         });
     }
