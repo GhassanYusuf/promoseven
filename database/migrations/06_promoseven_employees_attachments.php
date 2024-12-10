@@ -28,6 +28,9 @@ return new class extends Migration
             // Forign Key In Users
             $table->foreign('eid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
+            // Forign Key In Users
+            $table->foreign('done_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
 
     }

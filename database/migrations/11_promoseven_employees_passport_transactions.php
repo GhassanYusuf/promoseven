@@ -26,6 +26,9 @@ return new class extends Migration
             // Forign Key In RFID
             $table->foreign('eid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
+            // Forign Key In RFID
+            $table->foreign('done_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
         });
 
     }

@@ -31,12 +31,14 @@ return new class extends Migration
             $table->json('documents')->nullable();              // Attached Documents
             $table->date('start_date')->nullable();             // Start/Effective Date
             $table->date('end_date')->nullable();               // Contract End Date
-            $table->integer('doneBy')->nullable();              // The Person Who Created the Entry
-            $table->boolean('terminated')->default(false)->nullable();
+            $table->unsignedBigInteger('done_by')->nullable();   // The Person Who Created the Entry
             $table->timestamps();
 
             // Forign Key In Employees ID
             $table->foreign('eid')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+
+            // Forign Key In Employees ID
+            $table->foreign('done_by')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
 
             // Forign Key In Company ID
             $table->foreign('cid')->references('id')->on('companies')->onUpdate('cascade')->onDelete('cascade');
